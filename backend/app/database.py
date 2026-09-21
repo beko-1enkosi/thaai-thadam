@@ -21,4 +21,4 @@ def get_db():
         yield session
 
 
-# No tables are created until product models are defined in a later task.
+# Tables registered on Base are created by the application lifespan on startup.

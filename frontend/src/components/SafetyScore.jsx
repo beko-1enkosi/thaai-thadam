@@ -9,7 +9,7 @@ export default function SafetyScore({ score }) {
           {score.toFixed(1)}
           <small>/10</small>
         </strong>
-        <span>Sample safety score</span>
+        <span>Safety score</span>
       </span>
     </div>
   );

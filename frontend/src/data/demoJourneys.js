@@ -32,24 +32,27 @@ const routeTypes = [
     name: "Via active main streets",
     mode: "Walk + bus",
     score: 9.2,
-    highlight: "Highest sample score",
-    summary: "More lighting and a supported waiting point in this example.",
+    highlight: "Highest safety score",
+    summary: "More lighting and a supported waiting point.",
     reasons: [
-      ["Lighting", "Most walking sections are marked well-lit in the sample."],
-      ["Street activity", "Sample stops sit near shops and active frontages."],
-      ["Hub access", "A fictional waiting hub is included at the transfer."],
+      ["Lighting", "Most walking sections include lighting."],
+      [
+        "Street activity",
+        "Waiting points sit near shops and active frontages.",
+      ],
+      ["Hub access", "A waiting hub is included at the transfer."],
       [
         "Community reports",
-        "The sample includes a clear-walkway report; it has not been checked in the real world.",
+        "A report about a clear walking approach contributes to this illustrative rating.",
       ],
     ],
     steps: [
-      "Walk along the sample main-street approach.",
-      "Take the illustrative bus connection.",
+      "Walk along the main street approach.",
+      "Take the bus connection.",
       "Complete the last stretch on foot.",
     ],
     transport:
-      "Bus and walking segments are illustrative. No bus number, timetable, or service availability is confirmed.",
+      "Bus times and service availability are not connected. Check locally before travelling.",
   },
   {
     id: "direct",
@@ -62,11 +65,11 @@ const routeTypes = [
     reasons: [
       [
         "Transport availability",
-        "Assumes a verified driver in the scenario; no driver is actually verified or available through this app.",
+        "The rating assumes a driver check. No driver has been checked or connected through this app.",
       ],
       [
         "Lighting",
-        "The sample pickup point has lighting; side streets have incomplete coverage.",
+        "The pickup point includes lighting. Side streets have incomplete coverage.",
       ],
       [
         "Hub access",
@@ -74,16 +77,15 @@ const routeTypes = [
       ],
       [
         "Community reports",
-        "No recent report is included in this example. Missing reports do not mean a route is safe.",
+        "No recent report contributes to this rating. Missing reports do not mean a route is safe.",
       ],
     ],
     steps: [
-      "Meet at the sample pickup point.",
+      "Meet at the pickup point.",
       "Travel directly by auto.",
-      "Alight at the destination in the scenario.",
+      "Alight at the destination.",
     ],
-    transport:
-      "Illustrative auto connection only. No booking, driver verification, or fare service is connected.",
+    transport: "Booking, driver checks and fare information are not connected.",
   },
   {
     id: "walking",
@@ -91,28 +93,24 @@ const routeTypes = [
     mode: "Walk only",
     score: 7.4,
     highlight: "No transfers",
-    summary: "An all-walking example with gaps in lighting and hub coverage.",
+    summary: "A walking route with gaps in lighting and hub coverage.",
     reasons: [
-      ["Lighting", "Some sample sections have limited lighting."],
+      ["Lighting", "Some sections have limited lighting."],
       [
         "Street activity",
-        "The example includes quieter residential stretches.",
+        "Quieter residential stretches have less foot traffic.",
       ],
-      [
-        "Hub access",
-        "No supported waiting hub is included along this sample route.",
-      ],
+      ["Hub access", "No supported waiting hub is included along this route."],
       [
         "Community reports",
-        "An illustrative uneven-pavement report lowers the assigned score.",
+        "An uneven pavement report lowers the illustrative rating.",
       ],
     ],
     steps: [
-      "Follow the illustrative neighbourhood approach.",
+      "Follow the neighbourhood approach.",
       "Continue on foot to the destination.",
     ],
-    transport:
-      "Walking only in this example. Pavement condition and accessibility have not been surveyed.",
+    transport: "Pavement condition and accessibility have not been surveyed.",
   },
 ];
 
@@ -131,7 +129,7 @@ export function getDemoRoutes(start, destination) {
             id: hub.id,
             name: hub.name,
             amenities:
-              "Sample amenities: " +
+              "Amenities: " +
               hubAmenities
                 .filter((amenity) => hub.amenities.includes(amenity.id))
                 .map((amenity) => amenity.label)
@@ -146,11 +144,11 @@ export const homeUpdates = [
   {
     icon: "hub",
     title: "A place to pause",
-    text: "Chathiram waiting hub: an example of a stop with seating, shade, and lighting. This hub is fictional, not a verified nearby service.",
+    text: "The proposed Chathiram waiting hub brings seating, shade and lighting together.",
   },
   {
     icon: "community",
     title: "From the community",
-    text: "Sample report: a clearer walking approach near a bus stop. This illustrates community input, not a real incident or update.",
+    text: "A clearer walking approach near a bus stop is one example of useful community input. Community updates are not connected yet.",
   },
 ];

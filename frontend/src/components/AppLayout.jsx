@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { Link, NavLink, Outlet, useLocation } from "react-router";
+import PrototypeNotice from "./PrototypeNotice";
 import BottomNavigation from "./BottomNavigation";
 import Icon from "./Icon";
 import { navigation } from "../data/navigation";
@@ -48,14 +49,13 @@ export default function AppLayout() {
         </div>
       </header>
       <main id="main-content" ref={mainRef} tabIndex={-1}>
+        <PrototypeNotice />
         <Outlet />
       </main>
       <footer className="app-footer">
         <span>From the first step to the last.</span>
         <Link to="/about">About Thaai Thadam</Link>
-        <span className="footer-note">
-          Prototype &middot; Trichy, Tamil Nadu
-        </span>
+        <span className="footer-note">Trichy, Tamil Nadu</span>
       </footer>
       <BottomNavigation />
     </div>

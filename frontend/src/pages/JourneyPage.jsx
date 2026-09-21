@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router";
 import Icon from "../components/Icon";
-import DemoDataNotice from "../components/DemoDataNotice";
+import SafetyScoreInfo from "../components/SafetyScoreInfo";
 import RouteCard from "../components/RouteCard";
 import SafetyScore from "../components/SafetyScore";
 import { getDemoRoutes, locations } from "../data/demoJourneys";
@@ -59,7 +59,7 @@ export default function JourneyPage() {
     resetResults();
     setStart("thillai");
     setLocationNotice(
-      "Demo location set to Thillai Nagar. Your device location was not accessed.",
+      "Starting location set to Thillai Nagar. Your device location was not accessed.",
     );
   }
   const placeName = (id) => locations.find((place) => place.id === id)?.name;
@@ -73,16 +73,16 @@ export default function JourneyPage() {
       </div>
       {journeyHub && (
         <div className="demo-notice">
-          <span className="demo-label">Selected demo hub</span>
+          <span className="demo-label">Selected hub</span>
           <div>
             <p>
-              <strong>{journeyHub.name}</strong> - {journeyHub.area}
+              <strong>{journeyHub.name}</strong>. {journeyHub.area}
             </p>
             <p>{journeyHub.status}. Kept as a planning reference only.</p>
             <p>
               {journeyHub.journeyLocationId
-                ? "The matching sample area is prefilled. Routes are area examples, not directions to this fictional hub."
-                : "This hub's area is outside the three supported journey locations. Choose a sample destination to explore; no route to this hub is calculated."}
+                ? "The matching area is prefilled. Routes are examples for the area, not directions to this hub."
+                : "This hub's area is outside the three supported journey locations. Choose a supported destination to explore; no route to this hub is calculated."}
             </p>
             <Link
               to={`/safe-hubs?hub=${journeyHub.id}`}
@@ -97,7 +97,7 @@ export default function JourneyPage() {
         <form className="planner-form" onSubmit={findRoutes}>
           <div className="form-heading">
             <h2>Where shall we go?</h2>
-            <span className="small-label">Trichy demo</span>
+            <span className="small-label">Trichy</span>
           </div>
           <div className="location-fields">
             <div className="field">
@@ -150,10 +150,10 @@ export default function JourneyPage() {
             onClick={useDemoLocation}
           >
             <Icon name="locate" size={18} />
-            Use current location <span className="small-label">Demo</span>
+            Use example location
           </button>
           <p className="field-help">
-            Try three sample locations. The location button uses Thillai Nagar,
+            Choose from three locations. The location button uses Thillai Nagar,
             not GPS.
           </p>
           <p className="sr-only" role="status">
@@ -182,17 +182,14 @@ export default function JourneyPage() {
           <p className="small-label">Your comfort matters at every stage.</p>
         </aside>
       </div>
-      <DemoDataNotice explainScores>
-        All routes, estimates, ratings, and hub details below are fictional
-        planning examples. Check actual conditions before travelling.
-      </DemoDataNotice>
+      <SafetyScoreInfo />
       {routes.length > 0 ? (
         <section className="route-results" aria-labelledby="results-title">
           <div className="section-heading">
             <div>
               <p className="eyebrow">COMPARE YOUR OPTIONS</p>
               <h2 ref={resultsRef} tabIndex={-1} id="results-title">
-                3 demo routes
+                3 route options
               </h2>
               <p>
                 {placeName(start)} <span aria-hidden="true">&#8594;</span>
@@ -219,7 +216,7 @@ export default function JourneyPage() {
         <div className="planner-empty">
           <Icon name="journey" size={28} />
           <p>Every journey starts with a choice.</p>
-          <span>Select your destination to compare three sample routes.</span>
+          <span>Select your destination to compare three route options.</span>
         </div>
       )}
       <section id="route-details" aria-label="Selected route details">
@@ -227,7 +224,7 @@ export default function JourneyPage() {
           <div className="route-detail">
             <div className="section-heading">
               <div>
-                <p className="eyebrow">YOUR SELECTED DEMO ROUTE</p>
+                <p className="eyebrow">YOUR SELECTED ROUTE</p>
                 <h2 ref={detailsRef} tabIndex={-1}>
                   {selected.name}
                 </h2>
@@ -251,7 +248,7 @@ export default function JourneyPage() {
             </div>
             <div className="detail-columns">
               <div>
-                <h3>Why this sample rating?</h3>
+                <h3>Why this rating?</h3>
                 <ul className="rating-reasons">
                   {selected.reasons.map(([label, reason]) => (
                     <li key={label}>
@@ -273,7 +270,7 @@ export default function JourneyPage() {
                   <div className="hub-detail">
                     <Icon name="hub" />
                     <div>
-                      <span className="demo-label">Fictional hub</span>
+                      <span className="small-label">Nearby hub</span>
                       <h4>{selected.hub.name}</h4>
                       <Link
                         className="hub-reference-link"
@@ -283,8 +280,8 @@ export default function JourneyPage() {
                       </Link>
                       <p>{selected.hub.amenities}</p>
                       <p>
-                        Shown near the sample transfer. Location and facilities
-                        are unverified.
+                        Shown near the transfer. Location and facilities are
+                        unverified.
                       </p>
                     </div>
                   </div>
@@ -295,7 +292,7 @@ export default function JourneyPage() {
               <div>
                 <strong>Ready to try the next step?</strong>
                 <p>
-                  This opens a demo confirmation. No navigation or tracking
+                  This shows a journey summary. No navigation or tracking
                   starts.
                 </p>
               </div>
@@ -305,17 +302,16 @@ export default function JourneyPage() {
                 onClick={() => setStarted(true)}
                 disabled={started}
               >
-                {started ? "Demo journey ready" : "Start safer journey"}
+                {started ? "Journey ready" : "Start safer journey"}
                 <Icon name="arrow" size={18} />
               </button>
             </div>
             <div role="status">
               {started && (
                 <p className="journey-confirmation">
-                  Demo journey ready: {placeName(start)} to{" "}
-                  {placeName(destination)} via {selected.name.toLowerCase()}. No
-                  GPS navigation, booking, location sharing, or emergency
-                  monitoring is active.
+                  Journey ready: {placeName(start)} to {placeName(destination)}{" "}
+                  via {selected.name.toLowerCase()}. No GPS navigation, booking,
+                  location sharing, or emergency monitoring is active.
                 </p>
               )}
             </div>

@@ -1,21 +1,49 @@
-// Fictional hubs using recognizable area names. Nothing here is live or verified.
-// Distances are fixed examples from a demo reference point, not GPS calculations.
-export const hubDistanceOrigin = "a demo reference point in Thillai Nagar";
+// Fictional hubs with fixed illustrative data. No live availability or verified facilities.
+export const hubDistanceOrigin = "a reference point in Thillai Nagar";
 
 export const hubAmenities = [
-  { id: "lighting", label: "Lighting", filterable: true },
-  { id: "seating", label: "Seating", filterable: true },
-  { id: "charging", label: "Charging", filterable: true },
-  { id: "accessible", label: "Accessible", filterable: true },
-  { id: "toilets", label: "Toilets", filterable: true },
   {
-    id: "verified-transport",
-    label: "Verified transport nearby",
+    id: "lighting",
+    label: "Lighting",
     filterable: true,
   },
-  { id: "shelter", label: "Shelter / shade" },
-  { id: "visibility", label: "Visible surroundings" },
-  { id: "emergency-info", label: "Emergency information" },
+  {
+    id: "seating",
+    label: "Seating",
+    filterable: true,
+  },
+  {
+    id: "charging",
+    label: "Charging",
+    filterable: true,
+  },
+  {
+    id: "accessible",
+    label: "Accessible",
+    filterable: true,
+  },
+  {
+    id: "toilets",
+    label: "Toilets",
+    filterable: true,
+  },
+  {
+    id: "verified-transport",
+    label: "Transport pickup nearby",
+    filterable: true,
+  },
+  {
+    id: "shelter",
+    label: "Shelter / shade",
+  },
+  {
+    id: "visibility",
+    label: "Visible surroundings",
+  },
+  {
+    id: "emergency-info",
+    label: "Emergency information",
+  },
 ];
 
 export const demoHubs = [
@@ -25,11 +53,10 @@ export const demoHubs = [
     name: "Thillai Nagar waiting hub",
     area: "Thillai Nagar",
     address:
-      "Illustrative waiting point near a main-road shopping frontage in Thillai Nagar.",
+      "Proposed waiting point near a main road shopping frontage in Thillai Nagar.",
     distanceKm: 0.4,
-    status: "Available in demo scenario",
-    access:
-      "Sample access hours: 06:00-22:00. No actual opening hours have been checked.",
+    status: "Planned access",
+    access: "06:00 to 22:00.",
     score: 8.8,
     amenities: [
       "lighting",
@@ -40,14 +67,11 @@ export const demoHubs = [
       "visibility",
       "emergency-info",
     ],
-    transport: [
-      "Sample local bus connection",
-      "Illustrative auto pickup point; drivers are not verified",
-    ],
+    transport: ["Local bus connection", "Auto pickup point"],
     reasons: [
-      "The example includes lighting, clear sightlines, and an active shop frontage.",
-      "Step-free access and seating are assumed in the sample design, not audited.",
-      "Toilets and verified transport are not included in this scenario, limiting the assigned score.",
+      "The design includes lighting, clear sightlines and an active shop frontage.",
+      "Access without steps and seating contribute to the rating.",
+      "Toilets and a checked transport connection are not included.",
     ],
     lastReviewed: "2026-09-01",
     journeyLocationId: "thillai",
@@ -58,11 +82,10 @@ export const demoHubs = [
     name: "Chathiram waiting hub",
     area: "Chathiram Bus Stand",
     address:
-      "Fictional waiting area near the Chathiram Bus Stand approach, beside a sample commercial frontage.",
+      "Proposed waiting area near the Chathiram Bus Stand approach and commercial frontage.",
     distanceKm: 3.4,
-    status: "Available in demo scenario",
-    access:
-      "Sample access hours: 05:30-22:30. Facilities are not confirmed to exist.",
+    status: "Planned access",
+    access: "05:30 to 22:30.",
     score: 9.2,
     amenities: [
       "lighting",
@@ -75,14 +98,11 @@ export const demoHubs = [
       "visibility",
       "emergency-info",
     ],
-    transport: [
-      "Illustrative city bus interchange",
-      "Verified auto partnership assumed only in the demo; no real drivers or bookings",
-    ],
+    transport: ["City bus interchange", "Auto pickup partnership proposed"],
     reasons: [
-      "Lighting and open sightlines are included at the sample waiting and transfer points.",
-      "The scenario combines seating, shelter, step-free access, and toilet availability.",
-      "A verified transport partnership is assumed for scoring only; it has not been established.",
+      "Lighting and open sightlines support the waiting and transfer points.",
+      "Seating, shelter, access without steps and toilets contribute to the rating.",
+      "A transport partnership is assumed for scoring. No provider has been checked or connected.",
     ],
     lastReviewed: "2026-09-02",
     journeyLocationId: "chathiram",
@@ -93,12 +113,11 @@ export const demoHubs = [
     name: "Junction waiting hub",
     area: "Trichy Junction",
     address:
-      "Illustrative transfer point near the Trichy Junction station approach; not an identified railway facility.",
+      "Proposed transfer point near the Trichy Junction station approach.",
     distanceKm: 4.7,
-    status: "Available in demo scenario",
-    access:
-      "Sample access: all day, with charging from 06:00-22:00. No live availability is provided.",
-    score: 9.0,
+    status: "Planned access",
+    access: "All day. Charging hours: 06:00 to 22:00.",
+    score: 9,
     amenities: [
       "lighting",
       "seating",
@@ -110,14 +129,11 @@ export const demoHubs = [
       "visibility",
       "emergency-info",
     ],
-    transport: [
-      "Sample rail-to-bus transfer",
-      "Illustrative verified auto pickup; no verified provider is connected",
-    ],
+    transport: ["Rail and bus transfer", "Auto pickup partnership proposed"],
     reasons: [
-      "The example includes a lit transfer area with seating and visible surroundings.",
-      "Accessible access and toilets are assumed in the fictional facility description.",
-      "Limited charging hours reduce the assigned score; transport verification is a scenario assumption.",
+      "The design includes a lit transfer area with seating and visible surroundings.",
+      "Access without steps and toilets contribute to the rating.",
+      "Limited charging hours reduce the rating. No transport provider has been checked.",
     ],
     lastReviewed: "2026-09-03",
     journeyLocationId: "junction",
@@ -128,11 +144,10 @@ export const demoHubs = [
     name: "Cantonment rest point",
     area: "Cantonment",
     address:
-      "Fictional shaded waiting point near a Cantonment bus-stop approach.",
+      "Proposed shaded waiting point near a Cantonment bus stop approach.",
     distanceKm: 3.8,
-    status: "Limited access in demo scenario",
-    access:
-      "Sample access hours: 07:00-19:00. The example closes in the evening; actual access is unknown.",
+    status: "Limited access",
+    access: "07:00 to 19:00. Evening access is not included.",
     score: 7.8,
     amenities: [
       "lighting",
@@ -142,14 +157,11 @@ export const demoHubs = [
       "visibility",
       "emergency-info",
     ],
-    transport: [
-      "Illustrative neighbourhood bus stop",
-      "Sample walking connection; pavement condition has not been surveyed",
-    ],
+    transport: ["Neighbourhood bus stop", "Walking connection"],
     reasons: [
-      "Seating, shade, and clear surroundings support waiting in this example.",
-      "Step-free access is part of the design scenario, not a real accessibility assessment.",
-      "Earlier closure and the absence of charging, toilets, and verified transport lower the sample score.",
+      "Seating, shade and clear surroundings support waiting.",
+      "Access without steps is included in the design, but has not been audited.",
+      "Earlier closure and the absence of charging, toilets and a transport partnership reduce the rating.",
     ],
     lastReviewed: "2026-09-04",
     journeyLocationId: null,
@@ -159,21 +171,20 @@ export const demoHubs = [
     isDemo: true,
     name: "Rockfort market rest point",
     area: "Rockfort",
-    address:
-      "Illustrative waiting space near a Rockfort market approach; no exact site is claimed.",
+    address: "Proposed waiting space near a Rockfort market approach.",
     distanceKm: 4.2,
-    status: "Maintenance in demo scenario",
+    status: "Maintenance scenario",
     access:
-      "Unavailable in the sample maintenance scenario. This is not a real closure or service alert.",
+      "Unavailable in the maintenance example. This is not a real closure alert.",
     score: 6.6,
     amenities: ["seating", "shelter", "visibility", "emergency-info"],
     transport: [
-      "Sample market-area bus connection; not available through this fictional hub during maintenance",
+      "Market area bus connection, unavailable during the maintenance example",
     ],
     reasons: [
-      "The scenario includes active shop frontages and visible surroundings.",
-      "Lighting is marked unavailable during fictional maintenance, reducing the rating.",
-      "Step-free access, charging, toilets, and verified transport are not included in this example.",
+      "Active shop frontages and visible surroundings contribute to the rating.",
+      "Lighting is unavailable in the maintenance example, reducing the rating.",
+      "Access without steps, charging, toilets and a transport partnership are not included.",
     ],
     lastReviewed: "2026-09-05",
     journeyLocationId: null,
@@ -184,11 +195,10 @@ export const demoHubs = [
     name: "Srirangam waiting point",
     area: "Srirangam",
     address:
-      "Fictional waiting area near a Srirangam neighbourhood bus approach.",
+      "Proposed waiting area near a Srirangam neighbourhood bus approach.",
     distanceKm: 8.6,
-    status: "Limited access in demo scenario",
-    access:
-      "Sample access hours: 06:00-20:00. No current availability or operating facility is implied.",
+    status: "Limited access",
+    access: "06:00 to 20:00.",
     score: 8.1,
     amenities: [
       "lighting",
@@ -198,14 +208,11 @@ export const demoHubs = [
       "visibility",
       "emergency-info",
     ],
-    transport: [
-      "Illustrative neighbourhood bus connection",
-      "Sample auto stand; no verified transport partnership",
-    ],
+    transport: ["Neighbourhood bus connection", "Auto pickup point"],
     reasons: [
-      "Lighting, shade, and toilet availability are included in the fictional design.",
-      "Step-free access is not included, which limits the assigned score.",
-      "Shorter access hours and no verified transport connection lower the sample rating.",
+      "Lighting, shade and toilets contribute to the rating.",
+      "Access without steps is not included, which limits the rating.",
+      "Shorter access hours and no transport partnership reduce the rating.",
     ],
     lastReviewed: "2026-09-06",
     journeyLocationId: null,
@@ -216,7 +223,7 @@ export function filterDemoHubs(query, selectedAmenities) {
   const search = query.trim().toLowerCase();
   return demoHubs.filter(
     (hub) =>
-      `${hub.name} ${hub.area}`.toLowerCase().includes(search) &&
+      (hub.name + " " + hub.area).toLowerCase().includes(search) &&
       selectedAmenities.every((amenity) => hub.amenities.includes(amenity)),
   );
 }

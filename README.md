@@ -10,20 +10,21 @@ The intended experience is calm, trustworthy, accessible, and suitable for every
 
 ## MVP purpose and current status
 
-The hackathon MVP will demonstrate a realistic application to judges. **This revision adds the shared application shell, Home dashboard, a local-demo Journey experience, and a searchable Safe Hubs directory.**
+The hackathon MVP will demonstrate a realistic application to judges. **This revision adds the shared application shell, Home dashboard, a local-demo Journey experience, a searchable Safe Hubs directory, and anonymous issue reporting backed by SQLite.**
 
 Implemented:
 
 - Responsive React application with desktop navigation, mobile bottom navigation, and persistent emergency access.
-- Home dashboard with destination shortcuts, quick actions, and clearly labelled sample context.
+- Home dashboard with destination shortcuts and quick actions. A session dismissible notice explains the simulated route and mobility information.
 - Journey form, three route options, explained sample safety scores, route details, and a demo start confirmation.
 - Safe Hubs search, combined amenity filters, hub details, and links to and from Journey.
 - Plain CSS and reusable UI components inspired by the original coral and forest-green identity.
 - Routes: `/`, `/journey`, `/safe-hubs`, `/report`, `/community`, `/emergency`, `/about` and a missing-page fallback.
 - FastAPI server with `GET /api/health`, a Pydantic response schema, and local development CORS.
-- SQLAlchemy engine, session dependency, and base class prepared for SQLite.
+- Anonymous issue reporting with request validation, SQLite storage, and receipt confirmation.
+- SQLAlchemy reports table created automatically at application startup.
 
-Not implemented: real route calculation, maps, GPS navigation, verified hubs, report submission, community interactions, emergency alerts, authentication, external integrations, or product database tables. Report, Community, Emergency, and About retain their existing placeholder content. Navigation works independently of the backend; frontend API calls will be added when features need them.
+Not implemented: real route calculation, maps, GPS navigation, verified hubs, community interactions, emergency alerts, authentication, or external integrations. Community and Emergency remain informational placeholders. Report submission requires the backend; Journey and Safe Hubs continue using local demo data.
 
 ## Journey demo data
 
@@ -31,7 +32,7 @@ Not implemented: real route calculation, maps, GPS navigation, verified hubs, re
 
 The three route profiles use sample scores of 9.2, 8.5, and 7.4 out of 10, with explicit reasons involving lighting, activity, hub access, transport assumptions, and community reports. These are assigned illustrations, not computed safety predictions, verified routes, or live city information. Hub names, amenities, and community updates are fictional. Production use would require validated datasets and community/municipal input.
 
-The current-location button explicitly simulates Thillai Nagar without requesting device location. Selecting the same start and destination shows an error. Changing either location clears previous results. Starting a journey displays a demo confirmation only; it does not start tracking, navigation, booking, or emergency monitoring.
+The example location button explicitly uses Thillai Nagar without requesting device location. Selecting the same start and destination shows an error. Changing either location clears previous results. Starting a journey displays a demo confirmation only; it does not start tracking, navigation, booking, or emergency monitoring.
 
 ## Safe Hubs demo data
 
@@ -41,6 +42,35 @@ Search matches hub name or area without case sensitivity and ignores outer white
 
 Journey routes link to the matching hub record. "Use in journey" keeps the chosen hub as a labelled reference and prefills a matching supported area when available. Hubs outside the three supported areas remain references only; no route to the hub is calculated. "Get directions" displays a prototype message without opening a map or starting navigation.
 
+## Prototype notice and reporting
+
+A global yellow notice identifies the prototype environment. Dismissal is stored in `sessionStorage` for the current browser session, not permanently. A new session shows the notice again. When browser storage is blocked, dismissal still works until the page is reloaded. Individual UI labels are simplified, while score explanations and notices about unavailable navigation and emergency assistance remain. All route and hub data described above is still simulated, even after the notice is dismissed.
+
+Reports are different: valid submissions are actually stored in the local SQLite database. No names, phone numbers, email addresses, ID numbers, accounts, or device locations are requested. The description must contain 10 to 2,000 characters after trimming; optional landmarks are limited to 160 characters. Category and area must be one of the listed options. Optional occurrence timestamps must include a timezone and cannot be in the future. The form converts device local time to UTC; the API stores and returns UTC timestamps.
+
+| Endpoint | Result |
+| --- | --- |
+| `POST /api/reports` | Saves a report and returns HTTP 201 with `id`, `status`, and `created_at`. |
+| `GET /api/reports` | Returns reports newest first, breaking timestamp ties by descending ID. |
+
+A request body example:
+
+```json
+{
+  "category": "poor_lighting",
+  "area": "Thillai Nagar",
+  "landmark": "Near a bus stop",
+  "description": "The walking approach has insufficient lighting.",
+  "occurred_at": null
+}
+```
+
+All new reports have status `received`. Receipt does not mean verification, resolution, emergency dispatch, or municipal contact. Extra fields, unsupported categories/areas, and invalid descriptions or timestamps return HTTP 422. Storage failures return a generic HTTP 503 message. The frontend keeps entered text when submission fails and offers another report after success.
+
+This prototype's report list is unauthenticated and not private. Use nonidentifying test reports only. No emergency service is connected. The Community page has not been implemented.
+
+The frontend API defaults to `http://127.0.0.1:8000`. To override it, copy `frontend/.env.example` to `frontend/.env.local`, set `VITE_API_BASE_URL`, and restart Vite. A different frontend origin also needs an explicit CORS entry in the backend.
+
 ## Architecture
 
 ```text
@@ -49,7 +79,7 @@ thaai-thadam/
 │   ├── src/
 │   │   ├── components/   # Shared shell, navigation, route cards, and notices
 │   │   ├── pages/        # Individual route pages
-│   │   ├── services/     # Reserved for future API calls
+│   │   ├── services/     # Report API calls using fetch
 │   │   ├── data/         # Deterministic demo journeys and navigation
 │   │   ├── assets/       # Reserved for future assets
 │   │   ├── App.jsx
@@ -62,7 +92,7 @@ thaai-thadam/
 ├── backend/
 │   ├── app/
 │   │   ├── api/          # HTTP endpoints
-│   │   ├── models/       # Reserved for SQLAlchemy models
+│   │   ├── models/       # SQLAlchemy Report model
 │   │   ├── schemas/      # Pydantic request/response contracts
 │   │   ├── services/     # Reserved for feature logic
 │   │   ├── database.py
@@ -74,7 +104,7 @@ thaai-thadam/
 └── README.md
 ```
 
-The frontend uses React, Vite, JavaScript, React Router, and CSS. The backend uses Python, FastAPI, Uvicorn, SQLAlchemy, SQLite, and Pydantic. Future browser requests will go to the FastAPI API; database access belongs in the backend.
+The frontend uses React, Vite, JavaScript, React Router, and CSS. The backend uses Python, FastAPI, Uvicorn, SQLAlchemy, SQLite, and Pydantic. Report requests use FastAPI; database access belongs in the backend.
 
 The existing reference folder is named `docs/original_prototype` (underscore), rather than `docs/original-prototype`. Its files have not been moved or modified.
 
@@ -124,9 +154,9 @@ Expected health response:
 {"status":"ok","message":"Thaai Thadam API is running"}
 ```
 
-No environment variables or external accounts are needed. CORS permits `localhost` and `127.0.0.1` on Vite ports 5173 (development) and 4173 (build preview). Only GET is enabled for now; extend allowed methods when implementing write endpoints.
+No environment variables or external accounts are needed. CORS permits `localhost` and `127.0.0.1` on Vite ports 5173 (development) and 4173 (build preview). GET and POST are enabled for local report requests.
 
-SQLite is configured at `backend/thaai_thadam.db`, resolved relative to `database.py`. Importing the configuration does not open a database connection or create tables. A future database connection will create the file; it is ignored by Git. The health endpoint checks API availability only, not database readiness.
+SQLite is configured at `backend/thaai_thadam.db`, resolved relative to `database.py`. The application lifespan creates the database file and missing tables on startup. The file is ignored by Git. This simple prototype uses `Base.metadata.create_all`, not migrations; it does not alter existing columns automatically. The health endpoint checks API availability only, not database readiness.
 
 ## Checks
 

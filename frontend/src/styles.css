@@ -989,3 +989,51 @@ main {
   .hub-actions { flex-direction: column; }
   .hub-card .route-card-top { flex-wrap: wrap; }
 }
+
+/* Functional notices and reporting controls. */
+.prototype-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 0.9rem 1rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid #e2ca7d;
+  border-radius: 8px;
+  background: #fff7d9;
+  color: #58451e;
+  font-size: 0.85rem;
+}
+.prototype-notice p { margin: 0.25rem 0 0; }
+.prototype-notice button {
+  margin-left: auto;
+  min-height: 44px;
+  padding: 0.5rem;
+  border: 1px solid #a58b4b;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+}
+.score-info { margin: 1rem 0; font-size: 0.85rem; color: var(--muted); }
+.score-info summary { cursor: pointer; min-height: 44px; padding-block: 0.6rem; text-decoration: underline; }
+.score-info p { max-width: 80ch; }
+.report-form { max-width: 850px; }
+.report-form fieldset { min-width: 0; border: 0; padding: 0; margin: 0 0 1rem; }
+.report-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+.report-form input, .report-form textarea {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  min-height: 50px;
+  padding: 0.75rem;
+  border: 1px solid #a8b8ae;
+  border-radius: 8px;
+  color: inherit;
+  background: white;
+}
+.report-form textarea { font: inherit; resize: vertical; }
+.report-form [aria-invalid="true"] { border-color: #a32920; }
+.report-form .form-error { margin-top: 0.4rem; }
+@media (max-width: 600px) {
+  .report-fields { grid-template-columns: 1fr; }
+  .report-form > button { width: 100%; }
+}

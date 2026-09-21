@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router";
-import DemoDataNotice from "../components/DemoDataNotice";
+import SafetyScoreInfo from "../components/SafetyScoreInfo";
 import SafetyScore from "../components/SafetyScore";
 import HubCard from "../components/HubCard";
 import {
@@ -77,19 +77,19 @@ export default function SafeHubsPage() {
       <div className="page-heading">
         <p className="eyebrow">PLACES TO PAUSE</p>
         <h1>Safe mobility hubs</h1>
-        <p>Explore sample waiting points and the support they could offer.</p>
+        <p>Explore waiting points and the support they could offer.</p>
       </div>
-      <DemoDataNotice explainScores>
-        These six hubs are fictional prototype examples, not confirmed
-        facilities in Trichy. Status, access hours, transport verification, and
-        amenities are simulated, not live. Distances are fixed illustrations
-        from {hubDistanceOrigin}, not your current location.
-      </DemoDataNotice>
+      <p className="field-help">
+        Distances are measured from {hubDistanceOrigin}, not your current
+        location. Hub locations, facilities and access hours have not been
+        confirmed.
+      </p>
+      <SafetyScoreInfo />
 
       <form
         className="planner-form hub-search"
         role="search"
-        aria-label="Search and filter demo hubs"
+        aria-label="Search and filter hubs"
         onSubmit={(event) => event.preventDefault()}
       >
         <div className="field">
@@ -107,7 +107,7 @@ export default function SafeHubsPage() {
         <fieldset className="hub-filters" aria-describedby="hub-filter-help">
           <legend>Filter by amenities</legend>
           <p id="hub-filter-help" className="field-help">
-            Results must include all selected amenities in the demo scenario.
+            Results must include all selected amenities.
           </p>
           <div className="hub-filter-options">
             {hubAmenities
@@ -138,8 +138,8 @@ export default function SafeHubsPage() {
 
       {selectedId && !selectedHub && (
         <p role="status" className="inline-note">
-          That demo hub could not be found. Choose a hub below or clear search
-          and filters.
+          That hub could not be found. Choose a hub below or clear search and
+          filters.
         </p>
       )}
 
@@ -148,9 +148,9 @@ export default function SafeHubsPage() {
         className="route-results"
         aria-labelledby="hub-results-title"
       >
-        <h2 id="hub-results-title">Demo hubs</h2>
+        <h2 id="hub-results-title">Mobility hubs</h2>
         <p role="status" aria-atomic="true">
-          {visibleHubs.length} demo {visibleHubs.length === 1 ? "hub" : "hubs"}{" "}
+          {visibleHubs.length} {visibleHubs.length === 1 ? "hub" : "hubs"}{" "}
           found.
         </p>
         {visibleHubs.length ? (
@@ -166,10 +166,10 @@ export default function SafeHubsPage() {
           </div>
         ) : (
           <div className="page hub-empty">
-            <h3>No matching demo hubs</h3>
+            <h3>No matching hubs</h3>
             <p>
               Try another name or area, or remove an amenity filter. Only the
-              six sample hubs are searchable.
+              six listed hubs are searchable.
             </p>
             <button
               type="button"
@@ -187,7 +187,7 @@ export default function SafeHubsPage() {
           <div className="route-detail">
             <div className="section-heading">
               <div>
-                <p className="eyebrow">FICTIONAL HUB DETAILS</p>
+                <p className="eyebrow">HUB DETAILS</p>
                 <h2 id="hub-detail-title" ref={detailRef} tabIndex={-1}>
                   {selectedHub.name}
                 </h2>
@@ -201,14 +201,14 @@ export default function SafeHubsPage() {
                 <dd>{selectedHub.address}</dd>
               </div>
               <div>
-                <dt>Example distance</dt>
+                <dt>Approximate distance</dt>
                 <dd>
                   ~{selectedHub.distanceKm.toFixed(1)} km from{" "}
                   {hubDistanceOrigin}.
                 </dd>
               </div>
               <div>
-                <dt>Sample status</dt>
+                <dt>Access status</dt>
                 <dd>{selectedHub.status}</dd>
               </div>
               <div>
@@ -216,18 +216,18 @@ export default function SafeHubsPage() {
                 <dd>{selectedHub.access}</dd>
               </div>
               <div>
-                <dt>Demo review date</dt>
+                <dt>Example review date</dt>
                 <dd>
                   <time dateTime={selectedHub.lastReviewed}>
                     {selectedHub.lastReviewed}
                   </time>{" "}
-                  (fixed sample date, not an inspection)
+                  (illustrative date, not an inspection)
                 </dd>
               </div>
             </dl>
             <div className="detail-columns">
               <div>
-                <h3>Amenities included in this example</h3>
+                <h3>Amenities</h3>
                 <ul className="hub-amenities">
                   {hubAmenities
                     .filter((amenity) =>
@@ -238,10 +238,9 @@ export default function SafeHubsPage() {
                     ))}
                 </ul>
                 <p className="small-label">
-                  Amenities listed for the scenario are not a claim of current
-                  availability. Check the sample access information above.
+                  Check the access information before planning a visit.
                 </p>
-                <h3>Sample transport connections</h3>
+                <h3>Transport connections</h3>
                 <ul>
                   {selectedHub.transport.map((connection) => (
                     <li key={connection}>{connection}</li>
@@ -249,15 +248,15 @@ export default function SafeHubsPage() {
                 </ul>
               </div>
               <div>
-                <h3>Why this sample score?</h3>
+                <h3>Why this score?</h3>
                 <ul className="rating-reasons">
                   {selectedHub.reasons.map((reason) => (
                     <li key={reason}>{reason}</li>
                   ))}
                 </ul>
                 <p className="small-label">
-                  This is a fixed illustrative rating, not an AI prediction,
-                  municipal assessment, or guarantee of safety.
+                  These factors explain the rating. Conditions need to be
+                  checked locally.
                 </p>
               </div>
             </div>
@@ -286,9 +285,8 @@ export default function SafeHubsPage() {
             <div role="status">
               {directionsFor === selectedHub.id && (
                 <p className="journey-confirmation">
-                  Map directions will be available when mapping is connected.
-                  This hub is fictional; no navigation or location tracking has
-                  started.
+                  Map directions will be available when mapping is connected. No
+                  navigation or location tracking has started.
                 </p>
               )}
             </div>

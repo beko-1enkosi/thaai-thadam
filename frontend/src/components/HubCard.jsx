@@ -8,16 +8,16 @@ export default function HubCard({ hub, selected, onSelect }) {
       aria-labelledby={`hub-${hub.id}`}
     >
       <div className="route-card-top">
-        <span className="demo-label">Demo hub</span>
+        <span className="small-label">Waiting point</span>
         <SafetyScore score={hub.score} />
       </div>
       <h3 id={`hub-${hub.id}`}>{hub.name}</h3>
       <p>{hub.area}</p>
       <p className="small-label">
-        ~{hub.distanceKm.toFixed(1)} km from demo reference point
+        ~{hub.distanceKm.toFixed(1)} km from the reference point
       </p>
       <p className="hub-status">{hub.status}</p>
-      <ul className="hub-amenities" aria-label="Sample amenities">
+      <ul className="hub-amenities" aria-label="Amenities">
         {hubAmenities
           .filter((amenity) => hub.amenities.includes(amenity.id))
           .map((amenity) => (

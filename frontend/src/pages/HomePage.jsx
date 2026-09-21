@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { Link } from "react-router";
 import Icon from "../components/Icon";
 import QuickAction from "../components/QuickAction";
-import DemoDataNotice from "../components/DemoDataNotice";
 import { homeUpdates } from "../data/demoJourneys";
 
 export default function HomePage() {
@@ -39,7 +38,7 @@ export default function HomePage() {
             <span>Choose your destination</span>
             <Icon name="arrow" />
           </Link>
-          <p className="suggestion-label">Explore a demo journey to</p>
+          <p className="suggestion-label">Explore a journey to</p>
           <div className="destination-chips">
             <Link to="/journey?to=chathiram">
               Chathiram Bus Stand <span aria-hidden="true">&#8599;</span>
@@ -50,7 +49,7 @@ export default function HomePage() {
           </div>
           <div className="entry-note">
             <Icon name="shield" size={17} />
-            Compare sample routes with explained safety indicators.
+            Compare routes with explained safety indicators.
           </div>
         </section>
         <section className="quick-actions" aria-labelledby="quick-title">
@@ -59,25 +58,25 @@ export default function HomePage() {
             to="/journey"
             icon="journey"
             title="Plan a safer journey"
-            description="Compare demo route options"
+            description="Compare route options"
           />
           <QuickAction
             to="/safe-hubs"
             icon="hub"
             title="Find a safe hub"
-            description="Explore six demo waiting points"
+            description="Explore waiting points"
           />
           <QuickAction
             to="/report"
             icon="report"
             title="Report an issue"
-            description="Reporting is not available yet"
+            description="Share a mobility safety concern"
           />
           <QuickAction
             to="/emergency"
             icon="shield"
             title="Emergency help"
-            description="Prototype only - No dispatch"
+            description="Emergency assistance is not connected"
             emergency
           />
         </section>
@@ -88,12 +87,7 @@ export default function HomePage() {
             <p className="eyebrow">A LITTLE LOCAL CONTEXT</p>
             <h2 id="context-title">Along the way</h2>
           </div>
-          <span className="demo-label">Demo data</span>
         </div>
-        <DemoDataNotice>
-          Illustrative hub and community information. No live city data or
-          current location is used.
-        </DemoDataNotice>
         <div className="context-grid">
           {homeUpdates.map((item) => (
             <article className="context-card" key={item.title}>
