@@ -142,13 +142,18 @@ export default function ReportPage() {
               </dd>
             </div>
           </dl>
-          <button
-            type="button"
-            className="button button-primary"
-            onClick={startAnother}
-          >
-            Submit another report
-          </button>
+          <div className="hub-actions">
+            <button
+              type="button"
+              className="button button-primary"
+              onClick={startAnother}
+            >
+              Submit another report
+            </button>
+            <Link className="button button-secondary" to="/community">
+              View community updates
+            </Link>
+          </div>
         </section>
       ) : (
         <form
@@ -159,9 +164,10 @@ export default function ReportPage() {
           aria-busy={sending}
         >
           <p>
-            No account or contact details are needed. Reports are not private.
-            Please leave out names, phone numbers and other identifying
-            information.
+            No account or contact details are needed. The community sees only
+            the category, area, dates and received status. Landmarks and
+            descriptions are not shared. Please leave out names, phone numbers
+            and other identifying information.
           </p>
           <p className="field-help">
             Category, area and description are required.

@@ -60,10 +60,10 @@ class ReportReceipt(BaseModel):
 
 
 class ReportRead(ReportReceipt):
+    """Public allowlist. Never add landmark or description here."""
+
     category: ReportCategory
     area: ReportArea
-    landmark: str | None
-    description: str
     occurred_at: datetime | None
 
     @field_validator("occurred_at", mode="before")

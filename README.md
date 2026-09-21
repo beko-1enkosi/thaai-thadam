@@ -10,7 +10,7 @@ The intended experience is calm, trustworthy, accessible, and suitable for every
 
 ## MVP purpose and current status
 
-The hackathon MVP will demonstrate a realistic application to judges. **This revision adds the shared application shell, Home dashboard, a local-demo Journey experience, a searchable Safe Hubs directory, and anonymous issue reporting backed by SQLite.**
+The hackathon MVP will demonstrate a realistic application to judges. **This revision adds the shared application shell, Home dashboard, a local-demo Journey experience, a searchable Safe Hubs directory, anonymous issue reporting backed by SQLite, and a Community page using public report summaries.**
 
 Implemented:
 
@@ -22,9 +22,10 @@ Implemented:
 - Routes: `/`, `/journey`, `/safe-hubs`, `/report`, `/community`, `/emergency`, `/about` and a missing-page fallback.
 - FastAPI server with `GET /api/health`, a Pydantic response schema, and local development CORS.
 - Anonymous issue reporting with request validation, SQLite storage, and receipt confirmation.
+- Community reports, category and area summaries, filtering, and useful empty/error states without exposing free text.
 - SQLAlchemy reports table created automatically at application startup.
 
-Not implemented: real route calculation, maps, GPS navigation, verified hubs, community interactions, emergency alerts, authentication, or external integrations. Community and Emergency remain informational placeholders. Report submission requires the backend; Journey and Safe Hubs continue using local demo data.
+Not implemented: real route calculation, maps, GPS navigation, verified hubs, community discussions, emergency alerts, authentication, or external integrations. Emergency remains an informational placeholder. Report submission requires the backend; Journey and Safe Hubs continue using local demo data.
 
 ## Journey demo data
 
@@ -51,7 +52,8 @@ Reports are different: valid submissions are actually stored in the local SQLite
 | Endpoint | Result |
 | --- | --- |
 | `POST /api/reports` | Saves a report and returns HTTP 201 with `id`, `status`, and `created_at`. |
-| `GET /api/reports` | Returns reports newest first, breaking timestamp ties by descending ID. |
+| `GET /api/reports` | Returns only public report fields, newest first. Landmarks and descriptions are no longer returned. |
+| `GET /api/community/reports` | Returns public `reports` and a `summary` containing `total_reports`, `by_category`, and `by_area`. |
 
 A request body example:
 
@@ -67,7 +69,11 @@ A request body example:
 
 All new reports have status `received`. Receipt does not mean verification, resolution, emergency dispatch, or municipal contact. Extra fields, unsupported categories/areas, and invalid descriptions or timestamps return HTTP 422. Storage failures return a generic HTTP 503 message. The frontend keeps entered text when submission fails and offers another report after success.
 
-This prototype's report list is unauthenticated and not private. Use nonidentifying test reports only. No emergency service is connected. The Community page has not been implemented.
+Public endpoints expose only `id`, `category`, `area`, `occurred_at`, `created_at`, and `status`. They explicitly select those columns rather than loading free text into public responses. The older `GET /api/reports` endpoint now uses this same safe representation. POST submission and its receipt contract are unchanged. Landmarks and descriptions remain in local SQLite but are not exposed by any report listing endpoint. Do not include identifying information in submissions.
+
+The Community page fetches the list and summaries together from the backend on entry and on refresh. Both use the same set of stored reports. No report is duplicated into local demo data. Category and area filters apply together to the list; summaries cover all received reports. Tied leading categories are shown as a tie. Dates are displayed at day precision in India time. Counts describe submissions to Thaai Thadam, not official crime or safety statistics, and receipt does not establish that a report is verified.
+
+When no reports exist, the page invites the first contribution. When filters match nothing, they can be cleared. Backend failures show a retry action rather than invented counts or reports. No emergency service is connected. The global prototype notice still describes the separate simulated Journey and Safe Hubs information.
 
 The frontend API defaults to `http://127.0.0.1:8000`. To override it, copy `frontend/.env.example` to `frontend/.env.local`, set `VITE_API_BASE_URL`, and restart Vite. A different frontend origin also needs an explicit CORS entry in the backend.
 
@@ -181,6 +187,14 @@ Check Python dependency compatibility from `backend`:
 ```powershell
 .\.venv\Scripts\python.exe -m pip check
 ```
+
+Run isolated backend privacy, ordering and summary tests from `backend`:
+
+```powershell
+.\.venv\Scripts\python.exe -m unittest discover -s tests -v
+```
+
+These tests use in-memory SQLite and never modify local reports. For manual integration testing, submit a clearly marked nonincident report, follow "View community updates", and verify that neither the landmark nor description appears in the UI or public API response. Clean up only the exact automated records created for the test. Keep genuine user submissions.
 
 ## Development boundaries
 

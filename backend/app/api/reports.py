@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.models.report import Report
 from app.schemas.report import ReportCreate, ReportRead, ReportReceipt
+from app.services.community import get_public_reports
 
 router = APIRouter(prefix="/reports", tags=["Reports"])
 
@@ -26,6 +26,6 @@ def create_report(payload: ReportCreate, db: Session = Depends(get_db)):
 @router.get("", response_model=list[ReportRead])
 def list_reports(db: Session = Depends(get_db)):
     try:
-        return db.scalars(select(Report).order_by(Report.created_at.desc(), Report.id.desc())).all()
+        return get_public_reports(db)
     except SQLAlchemyError:
         raise HTTPException(status_code=503, detail="Reports are temporarily unavailable.") from None

@@ -1037,3 +1037,14 @@ main {
   .report-fields { grid-template-columns: 1fr; }
   .report-form > button { width: 100%; }
 }
+
+/* Community content reuses the existing cards and form controls. */
+.community-overview { margin: 1rem 0 1.5rem; }
+.community-overview dt { font-weight: 650; }
+.community-overview dd { margin: 0.5rem 0 0; }
+.community-summaries { margin-top: 2rem; }
+.community-counts { list-style: none; padding: 0; margin: 0; }
+.community-counts li { display: flex; justify-content: space-between; gap: 1rem; padding: 0.5rem 0; }
+.community-result-count { margin-top: 1rem; }
+.community-report-list { list-style: none; padding: 0; }
+.community-report p + p { margin-top: 0.5rem; }
