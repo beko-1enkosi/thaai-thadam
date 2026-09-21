@@ -1,3 +1,4 @@
+import Icon from "./Icon";
 import { useState } from "react";
 
 const STORAGE_KEY = "thaai-thadam:prototype-notice-dismissed";
@@ -39,7 +40,7 @@ export default function PrototypeNotice() {
         onClick={dismiss}
         aria-label="Dismiss prototype notice"
       >
-        Close
+        <Icon name="close" size={18} />
       </button>
     </aside>
   );

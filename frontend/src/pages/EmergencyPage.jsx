@@ -1,3 +1,4 @@
+import { SkeletonText } from '../components/Skeleton';
 import { useEffect, useRef, useState } from 'react';
 import { emergencyContacts } from '../config/emergencyContacts';
 
@@ -132,6 +133,7 @@ export default function EmergencyPage() {
             {locating ? 'Finding your location...' : location ? 'Update my current location' : 'Get my current location'}
           </button>
           <p role="status">{locating ? 'Waiting for your location. Your browser may ask for permission.' : location ? 'Location captured. Check the time and accuracy before sharing.' : ''}</p>
+          {locating && <SkeletonText wide />}
           {locationError && <p className="form-error" role="alert">{locationError}</p>}
           {location && (
             <>

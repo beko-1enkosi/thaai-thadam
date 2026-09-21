@@ -1,14 +1,29 @@
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, NavLink, Outlet, useLocation } from "react-router";
+import SplashScreen from './SplashScreen';
+import Footer from './Footer';
 import PrototypeNotice from "./PrototypeNotice";
 import BottomNavigation from "./BottomNavigation";
 import Icon from "./Icon";
 import { navigation } from "../data/navigation";
 
 export default function AppLayout() {
-  const { pathname } = useLocation();
+  const { pathname, hash } = useLocation();
+  const [showSplash, setShowSplash] = useState(() => {
+    try { return sessionStorage.getItem('thaai-thadam:splash-seen') !== 'true'; }
+    catch { return true; }
+  });
+  const finishSplash = useCallback(() => {
+    try { sessionStorage.setItem('thaai-thadam:splash-seen', 'true'); } catch { /* Still dismiss when storage is blocked. */ }
+    setShowSplash(false);
+  }, []);
   const previousPath = useRef(pathname);
   const mainRef = useRef(null);
+  const splashWasVisible = useRef(showSplash);
+  useEffect(() => {
+    if (!showSplash && splashWasVisible.current) mainRef.current?.focus();
+    splashWasVisible.current = showSplash;
+  }, [showSplash]);
   useEffect(() => {
     if (previousPath.current !== pathname) {
       mainRef.current.focus();
@@ -17,8 +32,16 @@ export default function AppLayout() {
     }
   }, [pathname]);
 
+  useEffect(() => {
+    if (!hash || showSplash) return;
+    const frame = requestAnimationFrame(() => document.getElementById(hash.slice(1))?.scrollIntoView());
+    return () => cancelAnimationFrame(frame);
+  }, [pathname, hash, showSplash]);
+
   return (
-    <div className="app-layout">
+    <>
+    {showSplash && <SplashScreen onFinish={finishSplash} />}
+    <div className="app-layout" inert={showSplash}>
       <a className="skip-link" href="#main-content">
         Skip to content
       </a>
@@ -52,12 +75,9 @@ export default function AppLayout() {
         <PrototypeNotice />
         <Outlet />
       </main>
-      <footer className="app-footer">
-        <span>From the first step to the last.</span>
-        <Link to="/about">About Thaai Thadam</Link>
-        <span className="footer-note">Trichy, Tamil Nadu</span>
-      </footer>
+      <Footer />
       <BottomNavigation />
     </div>
+    </>
   );
 }

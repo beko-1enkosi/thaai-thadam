@@ -32,6 +32,7 @@ function MapView({ boundsKey }) {
 }
 
 export default function MobilityMap({ hubs = [], selectedHubId, onSelectHub, currentLocation, route, start, destination }) {
+  const [tilesLoading, setTilesLoading] = useState(true);
   const [tileError, setTileError] = useState(false);
   const selectedHub = hubs.find(hub => hub.id === selectedHubId);
   const points = selectedHub
@@ -41,15 +42,17 @@ export default function MobilityMap({ hubs = [], selectedHubId, onSelectHub, cur
        ...(currentLocation ? [[currentLocation.latitude, currentLocation.longitude]] : [])];
   return (
     <>
+      <div className="map-frame">
+      {tilesLoading && <div className="map-loading" role="status"><span className="skeleton skeleton-map" aria-hidden="true" /><span>Loading map tiles...</span></div>}
       <MapContainer className="mobility-map" center={center} zoom={12} scrollWheelZoom={false}>
         <TileLayer
           url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           maxZoom={19}
-          eventHandlers={{ tileerror: () => setTileError(true) }}
+          eventHandlers={{ loading: () => setTilesLoading(true), load: () => setTilesLoading(false), tileerror: () => { setTileError(true); setTilesLoading(false); } }}
         />
         <MapView boundsKey={JSON.stringify(points)} />
-        {route && <Polyline positions={route.geometry} pathOptions={{ color: '#245b48', weight: 5 }}><Popup>{route.name}</Popup></Polyline>}
+        {route && <Polyline positions={route.geometry} pathOptions={{ color: '#b64032', weight: 5 }}><Popup>{route.name}</Popup></Polyline>}
         {hubs.map(hub => (
           <Marker key={hub.id} position={[hub.latitude, hub.longitude]} icon={hub.id === selectedHubId ? selectedHubIcon : hubIcon}
             title={`${hub.name}${hub.id === selectedHubId ? ' (selected)' : ''}`} alt={hub.name}
@@ -64,6 +67,7 @@ export default function MobilityMap({ hubs = [], selectedHubId, onSelectHub, cur
         {destination && <Marker position={destination.coordinates} icon={destinationIcon} title={`Destination: ${destination.name}`}><Popup>Destination: {destination.name}</Popup></Marker>}
         {currentLocation && <Marker position={[currentLocation.latitude, currentLocation.longitude]} icon={currentIcon} title="Your captured location"><Popup>Your captured location. This is not continuous tracking.</Popup></Marker>}
       </MapContainer>
+      </div>
       {tileError && <p role="status">Some map tiles could not load. Check your connection. The list and details are still available.</p>}
       <p className="field-help">H: Hub. S: Route start. D: Destination. You: Captured location. Use the lists to select hubs and routes without the map.</p>
     </>

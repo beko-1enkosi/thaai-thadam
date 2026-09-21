@@ -1,3 +1,4 @@
+import Icon from "./Icon";
 import SafetyScore from "./SafetyScore";
 import { hubAmenities } from "../data/demoHubs";
 
@@ -21,7 +22,7 @@ export default function HubCard({ hub, selected, onSelect }) {
         {hubAmenities
           .filter((amenity) => hub.amenities.includes(amenity.id))
           .map((amenity) => (
-            <li key={amenity.id}>{amenity.label}</li>
+            <li key={amenity.id}><Icon name={amenity.id === "verified-transport" ? "transport" : amenity.id} size={16} />{amenity.label}</li>
           ))}
       </ul>
       <button

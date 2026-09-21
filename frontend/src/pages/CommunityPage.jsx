@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
+import SkeletonList from "../components/Skeleton";
 import { reportAreas, reportCategories } from "../data/reportOptions";
 import { getCommunityReports } from "../services/community";
 
@@ -86,7 +87,7 @@ export default function CommunityPage() {
         landmarks and descriptions are not shared here.
       </p>
 
-      {phase === "loading" && <p role="status">Loading community updates...</p>}
+      {phase === "loading" && <><SkeletonList label="Loading community overview" /><SkeletonList label="Loading community reports" /></>}
       {phase === "error" && (
         <div className="page" role="alert">
           <h2>Community updates are unavailable</h2>

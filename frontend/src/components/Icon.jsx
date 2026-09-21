@@ -1,4 +1,13 @@
 const paths = {
+  foot: "M9 10c-3 0-4 3-3 6l1 4c1 3 6 2 6-1l-1-5c0-2-1-4-3-4 M12 3a2 2 0 1 1 0 4 2 2 0 0 1 0-4 M7 4v2 M4 7l1 1",
+  close: "M6 6l12 12 M18 6 6 18",
+  lighting: "M9 18h6 M10 21h4 M8 13a6 6 0 1 1 8 0l-1 3H9z",
+  seating: "M5 4v10h14V4 M3 14h18 M5 14v7 M19 14v7 M5 9h14",
+  charging: "m13 2-8 12h6l-1 8 9-13h-6z",
+  accessible: "M10 3a1 1 0 1 1 0 2 1 1 0 0 1 0-2 M10 7v7h7l3 6 M10 9h7 M7 12a5 5 0 1 0 7 7",
+  toilets: "M7 3v7 M4 5v5h6V5 M7 10v11 M17 3v18 M14 10h6l-3-6z",
+  transport: "M5 17V5c0-3 14-3 14 0v12H5 M5 11h14 M8 14h1 M15 14h1 M7 17v3 M17 17v3",
+
   home: "m3 10 9-7 9 7v10H3z M9 20v-7h6v7",
   journey: "M5 5h9a5 5 0 0 1 0 10H9 M12 12l-3 3 3 3 M5 3v4 M19 18v4",
   hub: "M3 21V9l9-6 9 6v12 M3 10h18 M8 21v-7h8v7 M10 7h4",

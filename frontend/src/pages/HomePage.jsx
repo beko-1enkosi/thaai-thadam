@@ -1,116 +1,36 @@
-import { useEffect } from "react";
-import { Link } from "react-router";
-import Icon from "../components/Icon";
-import QuickAction from "../components/QuickAction";
-import { homeUpdates } from "../data/demoJourneys";
+import { useEffect } from 'react';
+import { Link } from 'react-router';
+import Icon from '../components/Icon';
+import QuickAction from '../components/QuickAction';
+import JourneyIllustration from '../components/JourneyIllustration';
 
 export default function HomePage() {
-  useEffect(() => {
-    document.title = "Home | Thaai Thadam";
-  }, []);
-  return (
-    <>
-      <div className="page-heading">
-        <p className="eyebrow">
-          <Icon name="pin" size={15} />
-          TRICHY, TAMIL NADU
-        </p>
-        <h1>
-          A little more confidence.
-          <br />
-          Every step of the way.
-        </h1>
-        <p>Welcome. Let&apos;s plan a safer journey through Trichy.</p>
+  useEffect(() => { document.title = 'Home | Thaai Thadam'; }, []);
+  return <>
+    <section className="home-hero" aria-labelledby="home-title">
+      <div className="hero-copy">
+        <p className="eyebrow"><Icon name="pin" size={16} /> MADE FOR EVERYDAY TRICHY</p>
+        <h1 id="home-title">Move with<br />more <em>confidence.</em></h1>
+        <p>Plan safer journeys through Trichy.<br />A little more care, from the first step to the last.</p>
+        <div className="hero-actions"><Link className="button button-primary" to="/journey">Plan a journey <Icon name="arrow" size={18} /></Link><Link className="hero-secondary" to="/safe-hubs">Explore safe hubs <Icon name="arrow" size={18} /></Link></div>
       </div>
-      <div className="home-grid">
-        <section
-          className="journey-entry"
-          aria-labelledby="journey-entry-title"
-        >
-          <div className="section-kicker">
-            <Icon name="journey" />
-            YOUR NEXT JOURNEY
-          </div>
-          <h2 id="journey-entry-title">Where are you going?</h2>
-          <p>Consider the walk, the wait, and the last mile.</p>
-          <Link className="destination-entry" to="/journey">
-            <Icon name="pin" />
-            <span>Choose your destination</span>
-            <Icon name="arrow" />
-          </Link>
-          <p className="suggestion-label">Explore a journey to</p>
-          <div className="destination-chips">
-            <Link to="/journey?to=chathiram">
-              Chathiram Bus Stand <span aria-hidden="true">&#8599;</span>
-            </Link>
-            <Link to="/journey?to=junction">
-              Trichy Junction <span aria-hidden="true">&#8599;</span>
-            </Link>
-          </div>
-          <div className="entry-note">
-            <Icon name="shield" size={17} />
-            Compare routes with explained safety indicators.
-          </div>
-        </section>
-        <section className="quick-actions" aria-labelledby="quick-title">
-          <h2 id="quick-title">How can we help?</h2>
-          <QuickAction
-            to="/journey"
-            icon="journey"
-            title="Plan a safer journey"
-            description="Compare route options"
-          />
-          <QuickAction
-            to="/safe-hubs"
-            icon="hub"
-            title="Find a safe hub"
-            description="Explore waiting points"
-          />
-          <QuickAction
-            to="/report"
-            icon="report"
-            title="Report an issue"
-            description="Share a mobility safety concern"
-          />
-          <QuickAction
-            to="/emergency"
-            icon="shield"
-            title="Emergency help"
-            description="Call for help or share your location"
-            emergency
-          />
-        </section>
+      <JourneyIllustration />
+      <div className="hero-caption"><span>THE WALK. THE WAIT. THE WAY HOME.</span><span>Mother&apos;s Footprint <Icon name="footprint" size={18} /></span></div>
+    </section>
+    <section className="journey-entry home-destination" aria-labelledby="journey-entry-title">
+      <div><p className="eyebrow">YOUR NEXT JOURNEY</p><h2 id="journey-entry-title">Where are you going?</h2><p>Start with a place. We&apos;ll help you consider the way.</p></div>
+      <div><Link className="destination-entry" to="/journey"><Icon name="pin" /><span>Choose your destination</span><Icon name="arrow" /></Link><div className="destination-chips"><Link to="/journey?to=chathiram">Chathiram Bus Stand <span aria-hidden="true">&#8599;</span></Link><Link to="/journey?to=junction">Trichy Junction <span aria-hidden="true">&#8599;</span></Link></div></div>
+    </section>
+    <section className="home-features" aria-labelledby="features-title">
+      <div className="section-heading"><div><p className="eyebrow">A LITTLE SUPPORT GOES A LONG WAY</p><h2 id="features-title">For every part of your journey.</h2></div><span className="small-label">One place to plan, pause and connect.</span></div>
+      <div className="feature-grid">
+        <QuickAction to="/journey" icon="journey" title="Plan a safer journey" description="Compare routes and understand the safety factors." />
+        <QuickAction to="/safe-hubs" icon="hub" title="Find safe hubs" description="Explore places to wait and the support they could offer." />
+        <QuickAction to="/report" icon="report" title="Report an issue" description="Share a concern about your everyday journey." />
+        <QuickAction to="/community" icon="community" title="Community insights" description="See the mobility concerns people are sharing." />
+        <QuickAction to="/emergency" icon="shield" title="Emergency Help" description="Call for help or share your location with someone you trust." emergency />
       </div>
-      <section className="local-context" aria-labelledby="context-title">
-        <div className="section-heading">
-          <div>
-            <p className="eyebrow">A LITTLE LOCAL CONTEXT</p>
-            <h2 id="context-title">Along the way</h2>
-          </div>
-        </div>
-        <div className="context-grid">
-          {homeUpdates.map((item) => (
-            <article className="context-card" key={item.title}>
-              <span className="context-icon">
-                <Icon name={item.icon} />
-              </span>
-              <h3>{item.title}</h3>
-              <p>{item.text}</p>
-            </article>
-          ))}
-          <article className="context-card reminder">
-            <span className="context-icon">
-              <Icon name="sun" />
-            </span>
-            <h3>Planning an evening trip?</h3>
-            <p>
-              Think ahead about your waiting point and the final walk. Check
-              local conditions before you leave.
-            </p>
-            <span className="small-label">General travel reminder</span>
-          </article>
-        </div>
-      </section>
-    </>
-  );
+    </section>
+    <section className="home-support" aria-labelledby="support-title"><div><p className="eyebrow">ALONG THE WAY</p><h2 id="support-title">The small things<br />make a difference.</h2><p>A well lit walk. A place to sit. Someone who knows where you are.</p></div><div className="support-steps"><p><Icon name="lighting" /><span><strong>Think about the whole journey</strong>Consider the walk, the waiting point and the final stretch.</span></p><p><Icon name="community" /><span><strong>Learn from shared experiences</strong>Community reports help bring everyday concerns into view.</span></p><Link className="hub-reference-link" to="/about">The idea behind Thaai Thadam <Icon name="arrow" size={18} /></Link></div></section>
+  </>;
 }

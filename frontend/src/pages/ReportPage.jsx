@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
+import SkeletonList from "../components/Skeleton";
 import { reportAreas, reportCategories } from "../data/reportOptions";
 import { submitReport } from "../services/reports";
 
@@ -96,7 +97,8 @@ export default function ReportPage() {
   return (
     <>
       <div className="page-heading">
-        <h1>Report an issue</h1>
+        <p className="eyebrow">YOUR EXPERIENCE MATTERS</p>
+        <h1>Report a safety concern</h1>
         <p>Tell us about a mobility or public space safety concern.</p>
       </div>
       <aside className="demo-notice" aria-label="Emergency help information">
@@ -173,7 +175,7 @@ export default function ReportPage() {
             Category, area and description are required.
           </p>
           <fieldset disabled={sending}>
-            <legend className="sr-only">Issue details</legend>
+            <legend>Tell us about the concern</legend>
             <div className="report-fields">
               <div className="field">
                 <label htmlFor="report-category">Category</label>
@@ -292,6 +294,7 @@ export default function ReportPage() {
               )}
             </div>
           </fieldset>
+          {sending && <SkeletonList label="Waiting for report confirmation" count={1} />}
           {failure && (
             <p
               className="form-error"

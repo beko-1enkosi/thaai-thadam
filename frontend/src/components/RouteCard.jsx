@@ -20,6 +20,7 @@ export default function RouteCard({ route, selected, onSelect }) {
         <span>~{route.distance.toFixed(1)} km</span>
       </div>
       <p className="route-summary">{route.summary}</p>
+      <ul className="route-factors" aria-label="Safety factors">{route.reasons.slice(0,3).map(([label]) => <li key={label}><Icon name={{ Lighting:'lighting', 'Street activity':'community', 'Hub access':'hub', 'Transport availability':'transport', 'Community reports':'report' }[label]} size={16} />{label}</li>)}</ul>
       <button
         className="button button-secondary"
         type="button"

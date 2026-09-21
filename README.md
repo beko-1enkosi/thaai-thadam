@@ -18,7 +18,7 @@ Implemented:
 - Home dashboard with destination shortcuts and quick actions. A session dismissible notice explains the simulated route and mobility information.
 - Journey form, three route options, explained sample safety scores, route details, and a demo start confirmation.
 - Safe Hubs search, combined amenity filters, hub details, and links to and from Journey.
-- Plain CSS and reusable UI components inspired by the original coral and forest-green identity.
+- Plain CSS and reusable UI components inspired by the original navy and coral identity.
 - Routes: `/`, `/journey`, `/safe-hubs`, `/report`, `/community`, `/emergency`, `/about` and a missing-page fallback.
 - FastAPI server with `GET /api/health`, a Pydantic response schema, and local development CORS.
 - Anonymous issue reporting with request validation, SQLite storage, and receipt confirmation.
@@ -76,6 +76,16 @@ The Community page fetches the list and summaries together from the backend on e
 When no reports exist, the page invites the first contribution. When filters match nothing, they can be cleared. Backend failures show a retry action rather than invented counts or reports. Thaai Thadam does not dispatch emergency services. The global prototype notice still describes the separate simulated Journey and Safe Hubs information.
 
 The frontend API defaults to `http://127.0.0.1:8000`. To override it, copy `frontend/.env.example` to `frontend/.env.local`, set `VITE_API_BASE_URL`, and restart Vite. A different frontend origin also needs an explicit CORS entry in the backend.
+
+## Visual system and loading states
+
+The frontend uses the original deep navy (`#0F172A`) and coral (`#E85D4E`) with warm cream surfaces. Raleway handles interface text, with DM Serif Display for editorial headings. Fonts load from Google Fonts with local system/Georgia fallbacks; no font or icon package is required. The existing SVG icon component is extended for amenities and the footprint motif.
+
+`styles.css` retains shared layouts and functional controls; `visual.css` contains brand treatments, page compositions, responsive rules and motion. Home provides destination shortcuts and feature links. The global navy footer includes About and a Contact section that explicitly states no public contact channel is published.
+
+The first visit shows a three second footprint introduction, dismissed for the rest of the browser session using `thaai-thadam:splash-seen`. Skip intro and Emergency Help remain available immediately. The underlying app is inert while the intro is visible. Reduced motion uses a short fade of about 450 ms and disables recurring motion elsewhere. If session storage is blocked, dismissal still works while navigating, but a reload can show the intro again.
+
+Reusable skeletons appear only during Community requests, pending report confirmation, location requests and actual map tile loading. They do not add artificial delays or replace entered report text. Map attribution stays visible. Static hub data renders immediately. The prototype notice retains its separate session dismissal preference and all privacy and safety disclosures below remain applicable.
 
 ## Interactive maps and location
 
