@@ -65,7 +65,7 @@ export default function HomePage() {
             to="/safe-hubs"
             icon="hub"
             title="Find a safe hub"
-            description="Explore the concept - Coming soon"
+            description="Explore six demo waiting points"
           />
           <QuickAction
             to="/report"

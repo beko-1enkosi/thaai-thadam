@@ -1,18 +1,22 @@
 import { useEffect, useRef, useState } from "react";
-import { useSearchParams } from "react-router";
+import { Link, useSearchParams } from "react-router";
 import Icon from "../components/Icon";
 import DemoDataNotice from "../components/DemoDataNotice";
 import RouteCard from "../components/RouteCard";
 import SafetyScore from "../components/SafetyScore";
 import { getDemoRoutes, locations } from "../data/demoJourneys";
+import { demoHubs } from "../data/demoHubs";
 
 export default function JourneyPage() {
   const [params] = useSearchParams();
-  const [start, setStart] = useState("thillai");
+  const journeyHub = demoHubs.find((hub) => hub.id === params.get("hub"));
+  const [start, setStart] = useState(
+    journeyHub?.journeyLocationId === "thillai" ? "chathiram" : "thillai",
+  );
   const [destination, setDestination] = useState(
     locations.some((place) => place.id === params.get("to"))
       ? params.get("to")
-      : "",
+      : journeyHub?.journeyLocationId || "",
   );
   const [routes, setRoutes] = useState([]);
   const [selected, setSelected] = useState(null);
@@ -67,6 +71,28 @@ export default function JourneyPage() {
         <h1>Plan your journey</h1>
         <p>A little planning for the walk, the wait, and the ride.</p>
       </div>
+      {journeyHub && (
+        <div className="demo-notice">
+          <span className="demo-label">Selected demo hub</span>
+          <div>
+            <p>
+              <strong>{journeyHub.name}</strong> - {journeyHub.area}
+            </p>
+            <p>{journeyHub.status}. Kept as a planning reference only.</p>
+            <p>
+              {journeyHub.journeyLocationId
+                ? "The matching sample area is prefilled. Routes are area examples, not directions to this fictional hub."
+                : "This hub's area is outside the three supported journey locations. Choose a sample destination to explore; no route to this hub is calculated."}
+            </p>
+            <Link
+              to={`/safe-hubs?hub=${journeyHub.id}`}
+              className="hub-reference-link"
+            >
+              View selected hub details
+            </Link>
+          </div>
+        </div>
+      )}
       <div className="planner-intro">
         <form className="planner-form" onSubmit={findRoutes}>
           <div className="form-heading">
@@ -249,6 +275,12 @@ export default function JourneyPage() {
                     <div>
                       <span className="demo-label">Fictional hub</span>
                       <h4>{selected.hub.name}</h4>
+                      <Link
+                        className="hub-reference-link"
+                        to={`/safe-hubs?hub=${selected.hub.id}`}
+                      >
+                        View hub details
+                      </Link>
                       <p>{selected.hub.amenities}</p>
                       <p>
                         Shown near the sample transfer. Location and facilities

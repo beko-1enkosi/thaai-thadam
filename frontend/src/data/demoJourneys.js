@@ -1,3 +1,5 @@
+import { demoHubs, hubAmenities } from "./demoHubs.js";
+
 // Fictional planning examples using real place names. No live or verified data.
 // Each supported pair has fixed estimates; reverse trips reuse these demo values.
 export const locations = [
@@ -10,17 +12,17 @@ const corridors = {
   "chathiram-thillai": {
     times: [28, 18, 48],
     distances: [4.1, 3.8, 3.4],
-    hub: "Chathiram waiting hub",
+    hubId: "chathiram-waiting",
   },
   "junction-thillai": {
     times: [36, 23, 65],
     distances: [5.6, 5.1, 4.7],
-    hub: "Junction waiting hub",
+    hubId: "junction-waiting",
   },
   "chathiram-junction": {
     times: [40, 26, 74],
     distances: [6.4, 5.9, 5.3],
-    hub: "Chathiram waiting hub",
+    hubId: "chathiram-waiting",
   },
 };
 
@@ -118,6 +120,7 @@ export function getDemoRoutes(start, destination) {
   if (start === destination) return [];
   const corridor = corridors[[start, destination].sort().join("-")];
   if (!corridor) return [];
+  const hub = demoHubs.find((item) => item.id === corridor.hubId);
   return routeTypes.map((route, index) => ({
     ...route,
     minutes: corridor.times[index],
@@ -125,9 +128,15 @@ export function getDemoRoutes(start, destination) {
     hub:
       index === 0
         ? {
-            name: corridor.hub,
+            id: hub.id,
+            name: hub.name,
             amenities:
-              "Sample amenities: lighting, seating, shade, and clear sightlines.",
+              "Sample amenities: " +
+              hubAmenities
+                .filter((amenity) => hub.amenities.includes(amenity.id))
+                .map((amenity) => amenity.label)
+                .join(", ") +
+              ".",
           }
         : null,
   }));

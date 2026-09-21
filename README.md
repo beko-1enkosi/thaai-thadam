@@ -10,16 +10,36 @@ The intended experience is calm, trustworthy, accessible, and suitable for every
 
 ## MVP purpose and current status
 
-The hackathon MVP will demonstrate a realistic application to judges. **This revision establishes only the project foundation.**
+The hackathon MVP will demonstrate a realistic application to judges. **This revision adds the shared application shell, Home dashboard, a local-demo Journey experience, and a searchable Safe Hubs directory.**
 
 Implemented:
 
-- React application with shared navigation, plain CSS, and placeholder pages.
+- Responsive React application with desktop navigation, mobile bottom navigation, and persistent emergency access.
+- Home dashboard with destination shortcuts, quick actions, and clearly labelled sample context.
+- Journey form, three route options, explained sample safety scores, route details, and a demo start confirmation.
+- Safe Hubs search, combined amenity filters, hub details, and links to and from Journey.
+- Plain CSS and reusable UI components inspired by the original coral and forest-green identity.
 - Routes: `/`, `/journey`, `/safe-hubs`, `/report`, `/community`, `/emergency`, `/about` and a missing-page fallback.
 - FastAPI server with `GET /api/health`, a Pydantic response schema, and local development CORS.
 - SQLAlchemy engine, session dependency, and base class prepared for SQLite.
 
-Not implemented: journey routing, verified hubs, report submission, community interactions, emergency alerts, authentication, external integrations, or product database tables. Navigation works independently of the backend; frontend API calls will be added when features need them.
+Not implemented: real route calculation, maps, GPS navigation, verified hubs, report submission, community interactions, emergency alerts, authentication, external integrations, or product database tables. Report, Community, Emergency, and About retain their existing placeholder content. Navigation works independently of the backend; frontend API calls will be added when features need them.
+
+## Journey demo data
+
+`frontend/src/data/demoJourneys.js` contains three real place names (Thillai Nagar, Chathiram Bus Stand, and Trichy Junction), three fictional route profiles, and fixed estimates for each supported location pair. Reverse trips reuse the same example estimates. The data is deterministic; repeated searches do not change scores or travel times.
+
+The three route profiles use sample scores of 9.2, 8.5, and 7.4 out of 10, with explicit reasons involving lighting, activity, hub access, transport assumptions, and community reports. These are assigned illustrations, not computed safety predictions, verified routes, or live city information. Hub names, amenities, and community updates are fictional. Production use would require validated datasets and community/municipal input.
+
+The current-location button explicitly simulates Thillai Nagar without requesting device location. Selecting the same start and destination shows an error. Changing either location clears previous results. Starting a journey displays a demo confirmation only; it does not start tracking, navigation, booking, or emergency monitoring.
+
+## Safe Hubs demo data
+
+`frontend/src/data/demoHubs.js` defines six fictional hubs around Thillai Nagar, Chathiram Bus Stand, Trichy Junction, Cantonment, Rockfort, and Srirangam. Each record has a stable ID, explicit demo flag, area and landmark description, fixed example distance, simulated status/access hours, sample score and reasons, amenity IDs, illustrative transport connections, and a fixed demo review date. Distances are from a fictional reference point in Thillai Nagar, not device location. No coordinates, real inspections, verified providers, or live availability are claimed.
+
+Search matches hub name or area without case sensitivity and ignores outer whitespace. Amenity filters combine using AND: a result must include every selected amenity. Search, filters, and hub selection live in the URL for reloads and shareable detail links. Empty results offer a reset.
+
+Journey routes link to the matching hub record. "Use in journey" keeps the chosen hub as a labelled reference and prefills a matching supported area when available. Hubs outside the three supported areas remain references only; no route to the hub is calculated. "Get directions" displays a prototype message without opening a map or starting navigation.
 
 ## Architecture
 
@@ -27,10 +47,10 @@ Not implemented: journey routing, verified hubs, report submission, community in
 thaai-thadam/
 ├── frontend/
 │   ├── src/
-│   │   ├── components/   # Shared layout and placeholder wrapper
+│   │   ├── components/   # Shared shell, navigation, route cards, and notices
 │   │   ├── pages/        # Individual route pages
 │   │   ├── services/     # Reserved for future API calls
-│   │   ├── data/         # Reserved for future local data
+│   │   ├── data/         # Deterministic demo journeys and navigation
 │   │   ├── assets/       # Reserved for future assets
 │   │   ├── App.jsx
 │   │   ├── main.jsx
