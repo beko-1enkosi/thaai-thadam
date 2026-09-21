@@ -25,7 +25,7 @@ Implemented:
 - Community reports, category and area summaries, filtering, and useful empty/error states without exposing free text.
 - SQLAlchemy reports table created automatically at application startup.
 
-Not implemented: real route calculation, maps, GPS navigation, verified hubs, community discussions, emergency alerts, authentication, or external integrations. Emergency remains an informational placeholder. Report submission requires the backend; Journey and Safe Hubs continue using local demo data.
+Not implemented: real route calculation, maps, GPS navigation, verified hubs, community discussions, emergency alerts, authentication, or external integrations. Emergency Help provides call links and one-time browser location sharing. Report submission requires the backend; Journey and Safe Hubs continue using local demo data.
 
 ## Journey demo data
 
@@ -45,7 +45,7 @@ Journey routes link to the matching hub record. "Use in journey" keeps the chose
 
 ## Prototype notice and reporting
 
-A global yellow notice identifies the prototype environment. Dismissal is stored in `sessionStorage` for the current browser session, not permanently. A new session shows the notice again. When browser storage is blocked, dismissal still works until the page is reloaded. Individual UI labels are simplified, while score explanations and notices about unavailable navigation and emergency assistance remain. All route and hub data described above is still simulated, even after the notice is dismissed.
+A global yellow notice identifies the prototype environment. Dismissal is stored in `sessionStorage` for the current browser session, not permanently. A new session shows the notice again. When browser storage is blocked, dismissal still works until the page is reloaded. Individual UI labels are simplified, while score explanations and notices about unavailable navigation and emergency dispatch remain. All route and hub data described above is still simulated, even after the notice is dismissed.
 
 Reports are different: valid submissions are actually stored in the local SQLite database. No names, phone numbers, email addresses, ID numbers, accounts, or device locations are requested. The description must contain 10 to 2,000 characters after trimming; optional landmarks are limited to 160 characters. Category and area must be one of the listed options. Optional occurrence timestamps must include a timezone and cannot be in the future. The form converts device local time to UTC; the API stores and returns UTC timestamps.
 
@@ -73,9 +73,19 @@ Public endpoints expose only `id`, `category`, `area`, `occurred_at`, `created_a
 
 The Community page fetches the list and summaries together from the backend on entry and on refresh. Both use the same set of stored reports. No report is duplicated into local demo data. Category and area filters apply together to the list; summaries cover all received reports. Tied leading categories are shown as a tie. Dates are displayed at day precision in India time. Counts describe submissions to Thaai Thadam, not official crime or safety statistics, and receipt does not establish that a report is verified.
 
-When no reports exist, the page invites the first contribution. When filters match nothing, they can be cleared. Backend failures show a retry action rather than invented counts or reports. No emergency service is connected. The global prototype notice still describes the separate simulated Journey and Safe Hubs information.
+When no reports exist, the page invites the first contribution. When filters match nothing, they can be cleared. Backend failures show a retry action rather than invented counts or reports. Thaai Thadam does not dispatch emergency services. The global prototype notice still describes the separate simulated Journey and Safe Hubs information.
 
 The frontend API defaults to `http://127.0.0.1:8000`. To override it, copy `frontend/.env.example` to `frontend/.env.local`, set `VITE_API_BASE_URL`, and restart Vite. A different frontend origin also needs an explicit CORS entry in the backend.
+
+## Emergency Help
+
+Emergency contacts are configured in `frontend/src/config/emergencyContacts.js`: 112 for emergency services and 181 for the women's helpline. Phone links open a supported device's dialler only when pressed. Thaai Thadam never places calls or dispatches responders.
+
+Location is requested only after pressing the location button, with a 15 second timeout and no continuous tracking. Coordinates, accuracy and capture time remain in React state only. They are not sent to FastAPI, written to SQLite or saved in browser storage, and are cleared when leaving the page or refreshing. Browser location and clipboard access require localhost or HTTPS and appropriate permissions. Opening a map link shares the coordinates with Google Maps.
+
+Sharing uses the device's Web Share options. The user chooses a recipient and completes sending in their chosen app. If Web Share is missing, the action copies the message instead. Copying is also available separately, with selectable text if clipboard permission is denied. Cancelling sharing does not copy or send anything. A share response is not delivery confirmation. The message includes rounded coordinates, capture time, available accuracy and an external map link. No map is embedded. A stored trusted contact is intentionally deferred.
+
+For browser checks, exercise allowed and denied location permissions, unavailable location, timeout, sharing cancellation, and clipboard permission failure. Check that the location disappears after navigating away. Native dialling and share sheet completion require testing on a real supported phone; browser emulation cannot prove calls or message delivery.
 
 ## Architecture
 

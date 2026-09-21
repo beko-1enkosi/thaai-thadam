@@ -110,8 +110,8 @@ export default function ReportPage() {
             instead.
           </p>
           <p>
-            This form does not contact emergency services. The Emergency Help
-            area cannot currently send alerts or request assistance.
+            This form does not contact emergency services. Emergency Help
+            provides call links and tools to share your location.
           </p>
         </div>
       </aside>

@@ -76,7 +76,7 @@ export default function HomePage() {
             to="/emergency"
             icon="shield"
             title="Emergency help"
-            description="Emergency assistance is not connected"
+            description="Call for help or share your location"
             emergency
           />
         </section>

@@ -1048,3 +1048,10 @@ main {
 .community-result-count { margin-top: 1rem; }
 .community-report-list { list-style: none; padding: 0; }
 .community-report p + p { margin-top: 0.5rem; }
+
+/* Emergency tools reuse existing panels and touch friendly buttons. */
+.emergency-sections { display: grid; gap: 1rem; }
+.emergency-sections .page { min-width: 0; }
+.emergency-sections .button { white-space: normal; text-align: center; }
+.emergency-copy { margin-top: 1rem; }
+.emergency-copy textarea { width: 100%; padding: 0.75rem; font: inherit; resize: vertical; border: 1px solid #a8b8ae; border-radius: 8px; }
