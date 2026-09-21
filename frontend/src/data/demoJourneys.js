@@ -3,23 +3,41 @@ import { demoHubs, hubAmenities } from "./demoHubs.js";
 // Fictional planning examples using real place names. No live or verified data.
 // Each supported pair has fixed estimates; reverse trips reuse these demo values.
 export const locations = [
-  { id: "thillai", name: "Thillai Nagar" },
-  { id: "chathiram", name: "Chathiram Bus Stand" },
-  { id: "junction", name: "Trichy Junction" },
+  { id: "thillai", coordinates: [10.8185, 78.6820], name: "Thillai Nagar" },
+  { id: "chathiram", coordinates: [10.8320, 78.6948], name: "Chathiram Bus Stand" },
+  { id: "junction", coordinates: [10.7940, 78.6857], name: "Trichy Junction" },
 ];
 
 const corridors = {
   "chathiram-thillai": {
+    // Illustrative paths, not street routing or surveyed walking directions.
+    paths: [
+      [[10.8318, 78.6946], [10.829, 78.688], [10.822, 78.683]],
+      [[10.827, 78.69], [10.822, 78.687]],
+      [[10.83, 78.691], [10.824, 78.6855]],
+    ],
     times: [28, 18, 48],
     distances: [4.1, 3.8, 3.4],
     hubId: "chathiram-waiting",
   },
   "junction-thillai": {
+    // Illustrative paths, not street routing or surveyed walking directions.
+    paths: [
+      [[10.7941, 78.6856], [10.802, 78.681], [10.812, 78.68]],
+      [[10.802, 78.686], [10.811, 78.683]],
+      [[10.8, 78.683], [10.811, 78.681]],
+    ],
     times: [36, 23, 65],
     distances: [5.6, 5.1, 4.7],
     hubId: "junction-waiting",
   },
   "chathiram-junction": {
+    // Illustrative paths, not street routing or surveyed walking directions.
+    paths: [
+      [[10.8318, 78.6946], [10.822, 78.69], [10.81, 78.687], [10.8, 78.685]],
+      [[10.823, 78.693], [10.809, 78.69]],
+      [[10.825, 78.692], [10.815, 78.689], [10.804, 78.686]],
+    ],
     times: [40, 26, 74],
     distances: [6.4, 5.9, 5.3],
     hubId: "chathiram-waiting",
@@ -121,6 +139,11 @@ export function getDemoRoutes(start, destination) {
   const hub = demoHubs.find((item) => item.id === corridor.hubId);
   return routeTypes.map((route, index) => ({
     ...route,
+    geometry: [
+      locations.find(place => place.id === start).coordinates,
+      ...(start < destination ? corridor.paths[index] : [...corridor.paths[index]].reverse()),
+      locations.find(place => place.id === destination).coordinates,
+    ],
     minutes: corridor.times[index],
     distance: corridor.distances[index],
     hub:
@@ -152,3 +175,13 @@ export const homeUpdates = [
     text: "A clearer walking approach near a bus stop is one example of useful community input. Community updates are not connected yet.",
   },
 ];
+
+// Use a nearby area as a planning reference, never invent a route from arbitrary GPS coordinates.
+export function nearestJourneyLocation({ latitude, longitude }) {
+  const distances = locations.map(place => ({
+    place,
+    distance: Math.hypot((latitude - place.coordinates[0]) * 111.2,
+      (longitude - place.coordinates[1]) * 111.2 * Math.cos(latitude * Math.PI / 180)),
+  })).sort((a, b) => a.distance - b.distance);
+  return distances[0].distance <= 3 ? distances[0].place : null;
+}

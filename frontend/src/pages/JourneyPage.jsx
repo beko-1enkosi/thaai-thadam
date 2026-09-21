@@ -4,11 +4,16 @@ import Icon from "../components/Icon";
 import SafetyScoreInfo from "../components/SafetyScoreInfo";
 import RouteCard from "../components/RouteCard";
 import SafetyScore from "../components/SafetyScore";
-import { getDemoRoutes, locations } from "../data/demoJourneys";
+import { getDemoRoutes, locations, nearestJourneyLocation } from "../data/demoJourneys";
 import { demoHubs } from "../data/demoHubs";
+
+import MobilityMap from '../components/map/MobilityMap';
+import LocationControl from '../components/map/LocationControl';
+import useCurrentLocation from '../hooks/useCurrentLocation';
 
 export default function JourneyPage() {
   const [params] = useSearchParams();
+  const locationState = useCurrentLocation();
   const journeyHub = demoHubs.find((hub) => hub.id === params.get("hub"));
   const [start, setStart] = useState(
     journeyHub?.journeyLocationId === "thillai" ? "chathiram" : "thillai",
@@ -55,12 +60,19 @@ export default function JourneyPage() {
     setStarted(false);
     setRoutes(getDemoRoutes(start, destination));
   }
-  function useDemoLocation() {
+  function requestCurrentLocation() {
     resetResults();
-    setStart("thillai");
-    setLocationNotice(
-      "Starting location set to Thillai Nagar. Your device location was not accessed.",
-    );
+    setLocationNotice('');
+    locationState.getLocation((position) => {
+      resetResults();
+      const nearest = nearestJourneyLocation(position);
+      if (nearest) {
+        setStart(nearest.id);
+        setLocationNotice(`Planning start set to ${nearest.name}, the nearest supported area. The route begins there, not at your exact position. No connecting path is calculated.`);
+      } else {
+        setLocationNotice('Your location is outside the supported journey areas. Choose a starting area manually. No route from your current position is calculated.');
+      }
+    });
   }
   const placeName = (id) => locations.find((place) => place.id === id)?.name;
 
@@ -106,6 +118,7 @@ export default function JourneyPage() {
                 id="start"
                 value={start}
                 onChange={(event) => {
+                  locationState.clearLocation();
                   setStart(event.target.value);
                   setLocationNotice("");
                   resetResults();
@@ -144,22 +157,9 @@ export default function JourneyPage() {
               </select>
             </div>
           </div>
-          <button
-            className="location-button"
-            type="button"
-            onClick={useDemoLocation}
-          >
-            <Icon name="locate" size={18} />
-            Use example location
-          </button>
-          <p className="field-help">
-            Choose from three locations. The location button uses Thillai Nagar,
-            not GPS.
-          </p>
-          <p className="sr-only" role="status">
-            {locationNotice}
-          </p>
-          {locationNotice && <p className="inline-note">{locationNotice}</p>}
+          <LocationControl locationState={locationState} onRequest={requestCurrentLocation} />
+          <p className="field-help">Routes cover the three listed areas. Device location helps choose a nearby planning start, but does not calculate a route.</p>
+          {locationNotice && locationState.location && <p className="inline-note" role="status">{locationNotice}</p>}
           {error && (
             <p id="journey-error" className="form-error" role="alert">
               {error}
@@ -218,6 +218,20 @@ export default function JourneyPage() {
           <p>Every journey starts with a choice.</p>
           <span>Select your destination to compare three route options.</span>
         </div>
+      )}
+      {(routes.length > 0 || locationState.location) && (
+        <section className="map-section" aria-labelledby="journey-map-title">
+          <h2 id="journey-map-title">Journey map</h2>
+          <p>{selected ? selected.name : 'Select a route option to see its path.'}</p>
+          <p className="field-help">Paths are fixed planning illustrations, not calculated street directions. Use them to compare the areas and hubs, not to navigate.</p>
+          <MobilityMap
+            route={selected}
+            currentLocation={locationState.location}
+            start={routes.length ? locations.find(place => place.id === start) : null}
+            destination={routes.length ? locations.find(place => place.id === destination) : null}
+            hubs={demoHubs.filter(hub => hub.id === selected?.hub?.id || hub.id === journeyHub?.id)}
+          />
+        </section>
       )}
       <section id="route-details" aria-label="Selected route details">
         {selected && (

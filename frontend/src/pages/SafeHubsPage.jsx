@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { Link, useSearchParams } from "react-router";
 import SafetyScoreInfo from "../components/SafetyScoreInfo";
 import SafetyScore from "../components/SafetyScore";
@@ -10,9 +10,13 @@ import {
   hubDistanceOrigin,
 } from "../data/demoHubs";
 
+import MobilityMap from '../components/map/MobilityMap';
+import LocationControl from '../components/map/LocationControl';
+import useCurrentLocation from '../hooks/useCurrentLocation';
+
 export default function SafeHubsPage() {
   const [params, setParams] = useSearchParams();
-  const [directionsFor, setDirectionsFor] = useState(null);
+  const locationState = useCurrentLocation();
   const searchRef = useRef(null);
   const detailRef = useRef(null);
   const lastSelectionRef = useRef(null);
@@ -27,7 +31,6 @@ export default function SafeHubsPage() {
   }, []);
 
   useEffect(() => {
-    setDirectionsFor(null);
     if (selectedHub) detailRef.current?.focus();
   }, [selectedHub]);
 
@@ -135,6 +138,12 @@ export default function SafeHubsPage() {
           Clear search and filters
         </button>
       </form>
+
+      <section className="map-section" aria-labelledby="hubs-map-title">
+        <h2 id="hubs-map-title">Hub map</h2>
+        <LocationControl locationState={locationState} />
+        <MobilityMap hubs={visibleHubs} selectedHubId={selectedId} onSelectHub={selectHub} currentLocation={locationState.location} />
+      </section>
 
       {selectedId && !selectedHub && (
         <p role="status" className="inline-note">
@@ -267,13 +276,14 @@ export default function SafeHubsPage() {
               >
                 Use in journey
               </Link>
-              <button
-                type="button"
+              <a
                 className="button button-secondary"
-                onClick={() => setDirectionsFor(selectedHub.id)}
+                href={`https://www.openstreetmap.org/directions?to=${selectedHub.latitude}%2C${selectedHub.longitude}`}
+                target="_blank"
+                rel="noopener noreferrer"
               >
-                Get directions
-              </button>
+                Open directions (new tab)
+              </a>
               <button
                 type="button"
                 className="button button-secondary"
@@ -282,14 +292,7 @@ export default function SafeHubsPage() {
                 Back to hub results
               </button>
             </div>
-            <div role="status">
-              {directionsFor === selectedHub.id && (
-                <p className="journey-confirmation">
-                  Map directions will be available when mapping is connected. No
-                  navigation or location tracking has started.
-                </p>
-              )}
-            </div>
+            <p className="field-help">Directions open in OpenStreetMap to the illustrative point. A physical hub has not been confirmed there. Thaai Thadam does not provide turn by turn navigation.</p>
           </div>
         )}
       </section>

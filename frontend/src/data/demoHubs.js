@@ -1,3 +1,4 @@
+// Coordinates are fixed illustrative points around the named areas, not confirmed facilities.
 // Fictional hubs with fixed illustrative data. No live availability or verified facilities.
 export const hubDistanceOrigin = "a reference point in Thillai Nagar";
 
@@ -49,6 +50,8 @@ export const hubAmenities = [
 export const demoHubs = [
   {
     id: "thillai-waiting",
+    latitude: 10.8201,
+    longitude: 78.6824,
     isDemo: true,
     name: "Thillai Nagar waiting hub",
     area: "Thillai Nagar",
@@ -78,6 +81,8 @@ export const demoHubs = [
   },
   {
     id: "chathiram-waiting",
+    latitude: 10.8318,
+    longitude: 78.6946,
     isDemo: true,
     name: "Chathiram waiting hub",
     area: "Chathiram Bus Stand",
@@ -109,6 +114,8 @@ export const demoHubs = [
   },
   {
     id: "junction-waiting",
+    latitude: 10.7941,
+    longitude: 78.6856,
     isDemo: true,
     name: "Junction waiting hub",
     area: "Trichy Junction",
@@ -140,6 +147,8 @@ export const demoHubs = [
   },
   {
     id: "cantonment-rest",
+    latitude: 10.8024,
+    longitude: 78.6812,
     isDemo: true,
     name: "Cantonment rest point",
     area: "Cantonment",
@@ -168,6 +177,8 @@ export const demoHubs = [
   },
   {
     id: "rockfort-rest",
+    latitude: 10.8272,
+    longitude: 78.6972,
     isDemo: true,
     name: "Rockfort market rest point",
     area: "Rockfort",
@@ -191,6 +202,8 @@ export const demoHubs = [
   },
   {
     id: "srirangam-waiting",
+    latitude: 10.8561,
+    longitude: 78.6902,
     isDemo: true,
     name: "Srirangam waiting point",
     area: "Srirangam",

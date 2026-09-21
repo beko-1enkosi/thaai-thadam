@@ -25,7 +25,7 @@ Implemented:
 - Community reports, category and area summaries, filtering, and useful empty/error states without exposing free text.
 - SQLAlchemy reports table created automatically at application startup.
 
-Not implemented: real route calculation, maps, GPS navigation, verified hubs, community discussions, emergency alerts, authentication, or external integrations. Emergency Help provides call links and one-time browser location sharing. Report submission requires the backend; Journey and Safe Hubs continue using local demo data.
+Not implemented: real route calculation, GPS navigation, verified hubs, community discussions, emergency alerts, authentication, or live routing integrations. Emergency Help provides call links and one-time browser location sharing. Report submission requires the backend; Journey and Safe Hubs continue using local demo data.
 
 ## Journey demo data
 
@@ -33,15 +33,15 @@ Not implemented: real route calculation, maps, GPS navigation, verified hubs, co
 
 The three route profiles use sample scores of 9.2, 8.5, and 7.4 out of 10, with explicit reasons involving lighting, activity, hub access, transport assumptions, and community reports. These are assigned illustrations, not computed safety predictions, verified routes, or live city information. Hub names, amenities, and community updates are fictional. Production use would require validated datasets and community/municipal input.
 
-The example location button explicitly uses Thillai Nagar without requesting device location. Selecting the same start and destination shows an error. Changing either location clears previous results. Starting a journey displays a demo confirmation only; it does not start tracking, navigation, booking, or emergency monitoring.
+The location button requests one browser position only after being pressed. A supported area within 3 km becomes the planning start; otherwise manual area selection remains available. The exact position is shown separately and no connecting route is invented. Selecting the same start and destination shows an error. Changing either location clears previous results. Starting a journey displays a demo confirmation only; it does not start tracking, navigation, booking, or emergency monitoring.
 
 ## Safe Hubs demo data
 
-`frontend/src/data/demoHubs.js` defines six fictional hubs around Thillai Nagar, Chathiram Bus Stand, Trichy Junction, Cantonment, Rockfort, and Srirangam. Each record has a stable ID, explicit demo flag, area and landmark description, fixed example distance, simulated status/access hours, sample score and reasons, amenity IDs, illustrative transport connections, and a fixed demo review date. Distances are from a fictional reference point in Thillai Nagar, not device location. No coordinates, real inspections, verified providers, or live availability are claimed.
+`frontend/src/data/demoHubs.js` defines six fictional hubs around Thillai Nagar, Chathiram Bus Stand, Trichy Junction, Cantonment, Rockfort, and Srirangam. Each record has a stable ID, explicit demo flag, area and landmark description, fixed example distance, simulated status/access hours, sample score and reasons, amenity IDs, illustrative transport connections, and a fixed demo review date. Distances are from a fictional reference point in Thillai Nagar, not device location. Fixed illustrative coordinates place markers around these areas. They do not identify existing physical hubs. No real inspections, verified providers, or live availability are claimed.
 
 Search matches hub name or area without case sensitivity and ignores outer whitespace. Amenity filters combine using AND: a result must include every selected amenity. Search, filters, and hub selection live in the URL for reloads and shareable detail links. Empty results offer a reset.
 
-Journey routes link to the matching hub record. "Use in journey" keeps the chosen hub as a labelled reference and prefills a matching supported area when available. Hubs outside the three supported areas remain references only; no route to the hub is calculated. "Get directions" displays a prototype message without opening a map or starting navigation.
+Journey routes link to the matching hub record. "Use in journey" keeps the chosen hub as a labelled reference and prefills a matching supported area when available. Hubs outside the three supported areas remain references only; no route to the hub is calculated. "Open directions" intentionally opens OpenStreetMap in a new tab with the hub coordinates. Directions refer to an illustrative point, not a confirmed facility.
 
 ## Prototype notice and reporting
 
@@ -76,6 +76,20 @@ The Community page fetches the list and summaries together from the backend on e
 When no reports exist, the page invites the first contribution. When filters match nothing, they can be cleared. Backend failures show a retry action rather than invented counts or reports. Thaai Thadam does not dispatch emergency services. The global prototype notice still describes the separate simulated Journey and Safe Hubs information.
 
 The frontend API defaults to `http://127.0.0.1:8000`. To override it, copy `frontend/.env.example` to `frontend/.env.local`, set `VITE_API_BASE_URL`, and restart Vite. A different frontend origin also needs an explicit CORS entry in the backend.
+
+## Interactive maps and location
+
+Journey and Safe Hubs use Leaflet 1.9 and React Leaflet 5 with OpenStreetMap raster tiles. No API key, geocoder or live routing API is used. Leaflet CSS is imported in `main.jsx`. Maps share `components/map/MobilityMap.jsx`; lists, filters and detail cards remain usable without the map. Only matching hubs are mapped. Marker selection and list selection share the existing hub URL state.
+
+Each journey corridor has three fixed arrays of intermediate latitude/longitude points in `demoJourneys.js`. The start and destination coordinates are added in travel order, and reverse journeys reverse the intermediate points. These paths are illustrative, may not follow streets, and must not be used as navigation. Existing times, distances and safety scores are unchanged and are not calculated from geometry. The selected route alone is drawn, alongside endpoints and associated hubs.
+
+Journey and Safe Hubs share `useCurrentLocation`, which performs one browser request per button press, with a 15 second timeout. Coordinates remain in page state, clear on navigation or refresh, and never enter URLs, browser storage, FastAPI or SQLite. Manual selection works when permission fails. Journey uses the nearest supported area within 3 km as a planning reference; it never connects an arbitrary position to an example path. Selecting a manual start clears the captured position. Emergency keeps its existing independent location and sharing flow.
+
+Location requires a secure context such as HTTPS or localhost. Plain HTTP to a laptop's LAN address on a phone may not support it. Map imagery needs internet access. OpenStreetMap receives viewport tile requests, which reveal the viewed area, even though exact location coordinates are not submitted to our backend. External directions intentionally send the selected hub coordinates to OpenStreetMap.
+
+Tiles use the standard HTTPS endpoint, visible attribution, and normal browser caching. No offline download or prefetch is implemented. Follow the [OpenStreetMap tile usage policy](https://operations.osmfoundation.org/policies/tiles/) before wider deployment. Setup follows [React Leaflet documentation](https://react-leaflet.js.org/docs/start-setup/). A failed tile request shows a message without disabling lists or location controls.
+
+Run deterministic data checks with `node --test tests/mapData.test.js` from `frontend`. Browser checks cover filtered markers, selection in both directions, changing route paths, geolocation permission and fallback cases, and narrow layouts. Repeated automated map checks should stub tile responses to avoid loading volunteer servers. Real phone permissions, GPS accuracy, touch interactions and external directions still need device testing.
 
 ## Emergency Help
 

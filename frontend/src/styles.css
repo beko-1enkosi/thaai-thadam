@@ -1055,3 +1055,13 @@ main {
 .emergency-sections .button { white-space: normal; text-align: center; }
 .emergency-copy { margin-top: 1rem; }
 .emergency-copy textarea { width: 100%; padding: 0.75rem; font: inherit; resize: vertical; border: 1px solid #a8b8ae; border-radius: 8px; }
+
+/* Maps stay within the existing page layout and below persistent navigation. */
+.map-section { margin: 1.5rem 0; min-width: 0; }
+.mobility-map { height: 380px; width: 100%; z-index: 0; border: 1px solid #a8b8ae; border-radius: 8px; }
+.mobility-marker { display: flex; align-items: center; justify-content: center; background: white; color: #183b30; border: 2px solid #245b48; border-radius: 50%; font: bold 12px sans-serif; }
+.mobility-marker.is-selected { background: #245b48; color: white; outline: 3px solid #ac4b23; outline-offset: 2px; }
+.mobility-map .leaflet-control-zoom a { width: 44px; height: 44px; line-height: 44px; }
+.mobility-map .leaflet-popup-content { overflow-wrap: anywhere; }
+.map-location-control { margin: 1rem 0; }
+@media (max-width: 600px) { .mobility-map { height: 320px; } }
