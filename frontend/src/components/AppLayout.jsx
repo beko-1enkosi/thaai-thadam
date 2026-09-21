@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, NavLink, Outlet, useLocation } from "react-router";
+import AskThaai from "./assistant/AskThaai";
 import SplashScreen from './SplashScreen';
 import Footer from './Footer';
 import PrototypeNotice from "./PrototypeNotice";
@@ -78,6 +79,7 @@ export default function AppLayout() {
       <Footer />
       <BottomNavigation />
     </div>
+    {!showSplash && <AskThaai />}
     </>
   );
 }

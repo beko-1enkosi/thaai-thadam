@@ -1,237 +1,207 @@
-# Thaai Thadam — Mother's Footprint
+# Thaai Thadam
 
-A safe-mobility platform for women using public and last-mile transport in Trichy, Tamil Nadu, India.
+**Mother's Footprint**
 
-## Problem and proposed solution
+A mobility application for women travelling in Trichy, Tamil Nadu. Thaai Thadam brings journey planning, places to wait, community safety reporting and practical emergency tools into one responsive experience.
 
-Women navigating public transport and the last stretch of a journey need accessible local information about their surroundings and where to find support. Thaai Thadam proposes bringing journey planning, safe-hub information, community safety reporting, and emergency-support information into one mobile-first application.
+## The problem and the approach
 
-The intended experience is calm, trustworthy, accessible, and suitable for everyday use in India. These are design goals; the prototype does not yet provide verified safety information or operational assistance.
+A journey includes more than a ride. The walk to a bus stop, the waiting point, transport changes and the final stretch home all affect comfort and confidence. Local information is often fragmented, and everyday concerns can be difficult to share.
 
-## MVP purpose and current status
+Thaai Thadam helps people consider the whole journey, understand the factors behind safety information, share mobility concerns anonymously and access emergency tools quickly. It is a working hackathon MVP, not an official municipal service. No partnerships or operational hub facilities are claimed.
 
-The hackathon MVP will demonstrate a realistic application to judges. **This revision adds the shared application shell, Home dashboard, a local-demo Journey experience, a searchable Safe Hubs directory, anonymous issue reporting backed by SQLite, and a Community page using public report summaries.**
+## Implemented features
 
-Implemented:
-
-- Responsive React application with desktop navigation, mobile bottom navigation, and persistent emergency access.
-- Home dashboard with destination shortcuts and quick actions. A session dismissible notice explains the simulated route and mobility information.
-- Journey form, three route options, explained sample safety scores, route details, and a demo start confirmation.
-- Safe Hubs search, combined amenity filters, hub details, and links to and from Journey.
-- Plain CSS and reusable UI components inspired by the original navy and coral identity.
-- Routes: `/`, `/journey`, `/safe-hubs`, `/report`, `/community`, `/emergency`, `/about` and a missing-page fallback.
-- FastAPI server with `GET /api/health`, a Pydantic response schema, and local development CORS.
-- Anonymous issue reporting with request validation, SQLite storage, and receipt confirmation.
-- Community reports, category and area summaries, filtering, and useful empty/error states without exposing free text.
-- SQLAlchemy reports table created automatically at application startup.
-
-Not implemented: real route calculation, GPS navigation, verified hubs, community discussions, emergency alerts, authentication, or live routing integrations. Emergency Help provides call links and one-time browser location sharing. Report submission requires the backend; Journey and Safe Hubs continue using local demo data.
-
-## Journey demo data
-
-`frontend/src/data/demoJourneys.js` contains three real place names (Thillai Nagar, Chathiram Bus Stand, and Trichy Junction), three fictional route profiles, and fixed estimates for each supported location pair. Reverse trips reuse the same example estimates. The data is deterministic; repeated searches do not change scores or travel times.
-
-The three route profiles use sample scores of 9.2, 8.5, and 7.4 out of 10, with explicit reasons involving lighting, activity, hub access, transport assumptions, and community reports. These are assigned illustrations, not computed safety predictions, verified routes, or live city information. Hub names, amenities, and community updates are fictional. Production use would require validated datasets and community/municipal input.
-
-The location button requests one browser position only after being pressed. A supported area within 3 km becomes the planning start; otherwise manual area selection remains available. The exact position is shown separately and no connecting route is invented. Selecting the same start and destination shows an error. Changing either location clears previous results. Starting a journey displays a demo confirmation only; it does not start tracking, navigation, booking, or emergency monitoring.
-
-## Safe Hubs demo data
-
-`frontend/src/data/demoHubs.js` defines six fictional hubs around Thillai Nagar, Chathiram Bus Stand, Trichy Junction, Cantonment, Rockfort, and Srirangam. Each record has a stable ID, explicit demo flag, area and landmark description, fixed example distance, simulated status/access hours, sample score and reasons, amenity IDs, illustrative transport connections, and a fixed demo review date. Distances are from a fictional reference point in Thillai Nagar, not device location. Fixed illustrative coordinates place markers around these areas. They do not identify existing physical hubs. No real inspections, verified providers, or live availability are claimed.
-
-Search matches hub name or area without case sensitivity and ignores outer whitespace. Amenity filters combine using AND: a result must include every selected amenity. Search, filters, and hub selection live in the URL for reloads and shareable detail links. Empty results offer a reset.
-
-Journey routes link to the matching hub record. "Use in journey" keeps the chosen hub as a labelled reference and prefills a matching supported area when available. Hubs outside the three supported areas remain references only; no route to the hub is calculated. "Open directions" intentionally opens OpenStreetMap in a new tab with the hub coordinates. Directions refer to an illustrative point, not a confirmed facility.
-
-## Prototype notice and reporting
-
-A global yellow notice identifies the prototype environment. Dismissal is stored in `sessionStorage` for the current browser session, not permanently. A new session shows the notice again. When browser storage is blocked, dismissal still works until the page is reloaded. Individual UI labels are simplified, while score explanations and notices about unavailable navigation and emergency dispatch remain. All route and hub data described above is still simulated, even after the notice is dismissed.
-
-Reports are different: valid submissions are actually stored in the local SQLite database. No names, phone numbers, email addresses, ID numbers, accounts, or device locations are requested. The description must contain 10 to 2,000 characters after trimming; optional landmarks are limited to 160 characters. Category and area must be one of the listed options. Optional occurrence timestamps must include a timezone and cannot be in the future. The form converts device local time to UTC; the API stores and returns UTC timestamps.
-
-| Endpoint | Result |
+| Feature | Current behaviour |
 | --- | --- |
-| `POST /api/reports` | Saves a report and returns HTTP 201 with `id`, `status`, and `created_at`. |
-| `GET /api/reports` | Returns only public report fields, newest first. Landmarks and descriptions are no longer returned. |
-| `GET /api/community/reports` | Returns public `reports` and a `summary` containing `total_reports`, `by_category`, and `by_area`. |
+| Journey planning | Three fixed route options between Thillai Nagar, Chathiram Bus Stand and Trichy Junction, with estimates, selection and detail views. |
+| Safety scores | Explained indicators covering lighting, activity, hub access, community reports and transport assumptions. |
+| Interactive maps | Leaflet and OpenStreetMap tiles, route lines, endpoints, hub markers and selection shared with lists. |
+| Browser location | Optional one-time capture on Journey, Safe Hubs and Emergency. Permission failures retain manual alternatives. |
+| Safe Mobility Hubs | Six proposed hub records, name/area search, combined amenity filters, access information, detail views and external directions. |
+| Reporting | Validated anonymous submissions saved through FastAPI to SQLite, with a reference and received status. |
+| Community insights | Stored reports presented without landmarks or descriptions, category/area filters, summaries and empty/error states. |
+| Emergency Help | Intentional dialler links for 112 and 181, captured location, Web Share, clipboard copying and manual-copy fallback. |
+| Ask Thaai | Conversational product and mobility guidance through a backend OpenAI integration, suggestions, safe internal navigation and clear conversation. |
+| Text to speech | User-triggered browser reading of assistant replies, with stop controls and English voice fallback. |
+| Responsive design | Navy, coral and cream identity, mobile navigation, keyboard focus, reduced motion, real loading skeletons and a session splash. |
 
-A request body example:
+## Technology and architecture
 
-```json
-{
-  "category": "poor_lighting",
-  "area": "Thillai Nagar",
-  "landmark": "Near a bus stop",
-  "description": "The walking approach has insufficient lighting.",
-  "occurred_at": null
-}
+Frontend: React, Vite, JavaScript, React Router, plain CSS, Leaflet and React Leaflet. Map imagery comes from OpenStreetMap. Raleway and DM Serif Display load from Google Fonts, with system font fallbacks. Icons are local SVG components.
+
+Backend: Python, FastAPI, Uvicorn, SQLAlchemy, SQLite and Pydantic. The official OpenAI Python SDK calls the Responses API for Ask Thaai. React never calls OpenAI directly.
+
+```text
+Browser / React
+  |-- Local journey and hub data --> Leaflet + OpenStreetMap tiles
+  |-- Explicit location request --> Browser geolocation
+  |-- Reports and Community ------> FastAPI --> SQLAlchemy --> SQLite
+  |-- Ask Thaai ------------------> FastAPI --> OpenAI Responses API
+  |-- Read response aloud --------> Browser SpeechSynthesis
 ```
-
-All new reports have status `received`. Receipt does not mean verification, resolution, emergency dispatch, or municipal contact. Extra fields, unsupported categories/areas, and invalid descriptions or timestamps return HTTP 422. Storage failures return a generic HTTP 503 message. The frontend keeps entered text when submission fails and offers another report after success.
-
-Public endpoints expose only `id`, `category`, `area`, `occurred_at`, `created_at`, and `status`. They explicitly select those columns rather than loading free text into public responses. The older `GET /api/reports` endpoint now uses this same safe representation. POST submission and its receipt contract are unchanged. Landmarks and descriptions remain in local SQLite but are not exposed by any report listing endpoint. Do not include identifying information in submissions.
-
-The Community page fetches the list and summaries together from the backend on entry and on refresh. Both use the same set of stored reports. No report is duplicated into local demo data. Category and area filters apply together to the list; summaries cover all received reports. Tied leading categories are shown as a tie. Dates are displayed at day precision in India time. Counts describe submissions to Thaai Thadam, not official crime or safety statistics, and receipt does not establish that a report is verified.
-
-When no reports exist, the page invites the first contribution. When filters match nothing, they can be cleared. Backend failures show a retry action rather than invented counts or reports. Thaai Thadam does not dispatch emergency services. The global prototype notice still describes the separate simulated Journey and Safe Hubs information.
-
-The frontend API defaults to `http://127.0.0.1:8000`. To override it, copy `frontend/.env.example` to `frontend/.env.local`, set `VITE_API_BASE_URL`, and restart Vite. A different frontend origin also needs an explicit CORS entry in the backend.
-
-## Visual system and loading states
-
-The frontend uses the original deep navy (`#0F172A`) and coral (`#E85D4E`) with warm cream surfaces. Raleway handles interface text, with DM Serif Display for editorial headings. Fonts load from Google Fonts with local system/Georgia fallbacks; no font or icon package is required. The existing SVG icon component is extended for amenities and the footprint motif.
-
-`styles.css` retains shared layouts and functional controls; `visual.css` contains brand treatments, page compositions, responsive rules and motion. Home provides destination shortcuts and feature links. The global navy footer includes About and a Contact section that explicitly states no public contact channel is published.
-
-The first visit shows a three second footprint introduction, dismissed for the rest of the browser session using `thaai-thadam:splash-seen`. Skip intro and Emergency Help remain available immediately. The underlying app is inert while the intro is visible. Reduced motion uses a short fade of about 450 ms and disables recurring motion elsewhere. If session storage is blocked, dismissal still works while navigating, but a reload can show the intro again.
-
-Reusable skeletons appear only during Community requests, pending report confirmation, location requests and actual map tile loading. They do not add artificial delays or replace entered report text. Map attribution stays visible. Static hub data renders immediately. The prototype notice retains its separate session dismissal preference and all privacy and safety disclosures below remain applicable.
-
-## Interactive maps and location
-
-Journey and Safe Hubs use Leaflet 1.9 and React Leaflet 5 with OpenStreetMap raster tiles. No API key, geocoder or live routing API is used. Leaflet CSS is imported in `main.jsx`. Maps share `components/map/MobilityMap.jsx`; lists, filters and detail cards remain usable without the map. Only matching hubs are mapped. Marker selection and list selection share the existing hub URL state.
-
-Each journey corridor has three fixed arrays of intermediate latitude/longitude points in `demoJourneys.js`. The start and destination coordinates are added in travel order, and reverse journeys reverse the intermediate points. These paths are illustrative, may not follow streets, and must not be used as navigation. Existing times, distances and safety scores are unchanged and are not calculated from geometry. The selected route alone is drawn, alongside endpoints and associated hubs.
-
-Journey and Safe Hubs share `useCurrentLocation`, which performs one browser request per button press, with a 15 second timeout. Coordinates remain in page state, clear on navigation or refresh, and never enter URLs, browser storage, FastAPI or SQLite. Manual selection works when permission fails. Journey uses the nearest supported area within 3 km as a planning reference; it never connects an arbitrary position to an example path. Selecting a manual start clears the captured position. Emergency keeps its existing independent location and sharing flow.
-
-Location requires a secure context such as HTTPS or localhost. Plain HTTP to a laptop's LAN address on a phone may not support it. Map imagery needs internet access. OpenStreetMap receives viewport tile requests, which reveal the viewed area, even though exact location coordinates are not submitted to our backend. External directions intentionally send the selected hub coordinates to OpenStreetMap.
-
-Tiles use the standard HTTPS endpoint, visible attribution, and normal browser caching. No offline download or prefetch is implemented. Follow the [OpenStreetMap tile usage policy](https://operations.osmfoundation.org/policies/tiles/) before wider deployment. Setup follows [React Leaflet documentation](https://react-leaflet.js.org/docs/start-setup/). A failed tile request shows a message without disabling lists or location controls.
-
-Run deterministic data checks with `node --test tests/mapData.test.js` from `frontend`. Browser checks cover filtered markers, selection in both directions, changing route paths, geolocation permission and fallback cases, and narrow layouts. Repeated automated map checks should stub tile responses to avoid loading volunteer servers. Real phone permissions, GPS accuracy, touch interactions and external directions still need device testing.
-
-## Emergency Help
-
-Emergency contacts are configured in `frontend/src/config/emergencyContacts.js`: 112 for emergency services and 181 for the women's helpline. Phone links open a supported device's dialler only when pressed. Thaai Thadam never places calls or dispatches responders.
-
-Location is requested only after pressing the location button, with a 15 second timeout and no continuous tracking. Coordinates, accuracy and capture time remain in React state only. They are not sent to FastAPI, written to SQLite or saved in browser storage, and are cleared when leaving the page or refreshing. Browser location and clipboard access require localhost or HTTPS and appropriate permissions. Opening a map link shares the coordinates with Google Maps.
-
-Sharing uses the device's Web Share options. The user chooses a recipient and completes sending in their chosen app. If Web Share is missing, the action copies the message instead. Copying is also available separately, with selectable text if clipboard permission is denied. Cancelling sharing does not copy or send anything. A share response is not delivery confirmation. The message includes rounded coordinates, capture time, available accuracy and an external map link. No map is embedded. A stored trusted contact is intentionally deferred.
-
-For browser checks, exercise allowed and denied location permissions, unavailable location, timeout, sharing cancellation, and clipboard permission failure. Check that the location disappears after navigating away. Native dialling and share sheet completion require testing on a real supported phone; browser emulation cannot prove calls or message delivery.
-
-## Architecture
 
 ```text
 thaai-thadam/
-├── frontend/
-│   ├── src/
-│   │   ├── components/   # Shared shell, navigation, route cards, and notices
-│   │   ├── pages/        # Individual route pages
-│   │   ├── services/     # Report API calls using fetch
-│   │   ├── data/         # Deterministic demo journeys and navigation
-│   │   ├── assets/       # Reserved for future assets
-│   │   ├── App.jsx
-│   │   ├── main.jsx
-│   │   └── styles.css
-│   ├── index.html
-│   ├── package.json
-│   ├── package-lock.json
-│   └── vite.config.js
-├── backend/
-│   ├── app/
-│   │   ├── api/          # HTTP endpoints
-│   │   ├── models/       # SQLAlchemy Report model
-│   │   ├── schemas/      # Pydantic request/response contracts
-│   │   ├── services/     # Reserved for feature logic
-│   │   ├── database.py
-│   │   └── main.py
-│   └── requirements.txt
-├── docs/
-│   └── original_prototype/ # Existing reference material, preserved
-├── .gitignore
-└── README.md
+  frontend/
+    src/
+      components/           Shared shell, notices, cards, loading states
+        assistant/          Ask Thaai panel and speech controls
+        map/                Shared map and location controls
+      config/               Emergency phone configuration
+      data/                 Fixed journey/hub data and report options
+      hooks/                One-time browser location
+      pages/                Existing application routes
+      services/             Report, Community and assistant fetch calls
+      styles.css            Shared layout and controls
+      visual.css            Brand treatments and responsive design
+      assistant.css         Ask Thaai layout and interactions
+    tests/                  Deterministic map data tests
+    .env.example
+  backend/
+    app/
+      api/                  Health, reports, Community and assistant routes
+      models/               Report database model
+      schemas/              Validated API contracts
+      services/             Public report projection and assistant context/calls
+      database.py           SQLite engine and shared Base
+      main.py               FastAPI application, startup and CORS
+    tests/                  Backend privacy and assistant integration tests
+    requirements.txt
+    .env.example
+  docs/original_prototype/   Original concept references, preserved
+  README.md
 ```
-
-The frontend uses React, Vite, JavaScript, React Router, and CSS. The backend uses Python, FastAPI, Uvicorn, SQLAlchemy, SQLite, and Pydantic. Report requests use FastAPI; database access belongs in the backend.
-
-The existing reference folder is named `docs/original_prototype` (underscore), rather than `docs/original-prototype`. Its files have not been moved or modified.
 
 ## Local setup
 
-Prerequisites: Node.js 22.12+ (Node 24 supported), npm, and Python 3.10+ with pip and venv. Run the frontend and backend in separate terminals, starting from the repository root.
+Prerequisites: Node.js 22.12 or later and Python 3.10 or later. Node 24 and Python 3.14 were used for local validation. Run frontend and backend in separate terminals from the repository root.
 
 ### Frontend
 
 ```powershell
 cd frontend
-npm install
+npm ci
 npm run dev
 ```
 
-Open http://localhost:5173. The port is fixed so it matches the API's CORS configuration. If PowerShell blocks `npm.ps1`, use `npm.cmd` in place of `npm`.
+Open http://localhost:5173. If PowerShell blocks `npm.ps1`, use `npm.cmd`. To change the backend URL, copy `frontend/.env.example` to `frontend/.env.local` and edit `VITE_API_BASE_URL`, then restart Vite.
 
-After the first installation, use `npm ci` to reproduce the committed dependency lockfile.
-
-### Backend (Windows PowerShell)
+### Backend on Windows PowerShell
 
 ```powershell
 cd backend
 python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
+
+# Optional: set these in this terminal to enable provider-backed Ask Thaai replies.
+$env:OPENAI_API_KEY = [System.Net.NetworkCredential]::new('', (Read-Host 'OpenAI API key' -AsSecureString)).Password
+$env:OPENAI_MODEL = 'gpt-5.6-luna'
+
 .\.venv\Scripts\python.exe -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```
 
-These commands do not require activating the virtual environment or changing PowerShell execution policy.
+Omit the two environment assignments to run without an OpenAI key. No virtual environment activation or execution-policy change is required. The key input is masked and the command does not print it.
 
-On macOS/Linux:
+### Backend on macOS or Linux
 
 ```sh
 cd backend
 python3 -m venv .venv
 .venv/bin/python -m pip install -r requirements.txt
+# Optional: supply OPENAI_API_KEY through your shell or a secret manager.
+export OPENAI_MODEL=gpt-5.6-luna
 .venv/bin/python -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```
 
-API health: http://127.0.0.1:8000/api/health
+Health: http://127.0.0.1:8000/api/health. Interactive API documentation: http://127.0.0.1:8000/docs.
 
-Interactive API documentation: http://127.0.0.1:8000/docs
+SQLite is created at `backend/thaai_thadam.db`, independent of the process working directory. Startup creates missing tables with SQLAlchemy `Base.metadata.create_all`; it does not migrate existing columns. Local CORS permits localhost and 127.0.0.1 on ports 5173 and 4173.
 
-Expected health response:
+### Environment variables
+
+| Variable | Where | Default / purpose |
+| --- | --- | --- |
+| `OPENAI_API_KEY` | Backend only | Optional secret. Required for provider-backed assistant replies. |
+| `OPENAI_MODEL` | Backend only | `gpt-5.6-luna`. Must be available to the configured API project. |
+| `VITE_API_BASE_URL` | Frontend | `http://127.0.0.1:8000`. Public backend base URL. |
+
+**Never commit API keys. Never prefix a provider key with `VITE_`.** Vite variables are public build-time values. `.env`, `.env.local` and other `.env.*` files are ignored; only `.env.example` files are tracked. `backend/.env.example` is a reference template: the backend reads process environment variables and does not automatically load `.env` files. No real key is included in this repository.
+
+## API endpoints
+
+| Method and path | Contract |
+| --- | --- |
+| `GET /api/health` | `{ "status": "ok", "message": "Thaai Thadam API is running" }`. Does not test provider or database readiness. |
+| `POST /api/reports` | Accepts category, area, optional landmark, description and optional timezone-aware occurred_at. Returns HTTP 201 with id, status and created_at. |
+| `GET /api/reports` | Public fields only: id, category, area, occurred_at, created_at and status, newest first. |
+| `GET /api/community/reports` | Public reports plus summary.total_reports, summary.by_category and summary.by_area. |
+| `POST /api/assistant` | Accepts message, up to 10 history messages and current_path. Returns `{ "message": "..." }`. |
+
+Report descriptions must contain 10 to 2,000 trimmed characters. Optional landmarks allow up to 160 characters. Category and area use fixed options, occurrence times cannot be in the future, and new reports have status `received`. Receipt does not mean verification or resolution.
+
+Assistant request example:
 
 ```json
-{"status":"ok","message":"Thaai Thadam API is running"}
+{
+  "message": "How does the safety score work?",
+  "history": [],
+  "current_path": "/journey"
+}
 ```
 
-No environment variables or external accounts are needed. CORS permits `localhost` and `127.0.0.1` on Vite ports 5173 (development) and 4173 (build preview). GET and POST are enabled for local report requests.
+Assistant messages allow 1 to 2,000 trimmed characters. History roles are limited to user and assistant. Current paths are limited to the seven existing routes. Unknown fields, excessive history and invalid paths return 422. Missing configuration, empty/incomplete responses or provider failures return a friendly 503; provider rate limiting returns 429. No raw provider diagnostics are returned.
 
-SQLite is configured at `backend/thaai_thadam.db`, resolved relative to `database.py`. The application lifespan creates the database file and missing tables on startup. The file is ignored by Git. This simple prototype uses `Base.metadata.create_all`, not migrations; it does not alter existing columns automatically. The health endpoint checks API availability only, not database readiness.
+## Ask Thaai
+
+Ask Thaai uses the existing footprint identity, with a floating launcher and a keyboard-accessible dialog. Conversation stays in React state across page navigation and closes without clearing it. Clear conversation or a full reload resets it. Introductory launcher behaviour uses only a session preference.
+
+The backend sends the latest ten relevant messages plus the new question and a whitelisted page path. Product knowledge and safety instructions live in `backend/app/services/assistant_context.py`. Responses use `store=False`, a bounded output, a 25 second provider timeout and no automatic retries. The frontend times out after 30 seconds. There are no agent tools, database lookups, location attachments, report submissions or bookings through the assistant.
+
+Common urgent phrases trigger fixed emergency guidance before any provider call, including when no key exists. This conservative rule does not detect every emergency; the system instructions also prioritize concise emergency help. The assistant is automated and can make mistakes. Its plain text is never rendered as HTML or converted into arbitrary clickable URLs. Feature links come only from a fixed route allowlist.
+
+Without a key or backend connection, the panel remains usable and explains that Thaai is unavailable. It does not invent a conversational reply. The user can still open every product feature. Text to speech starts only on a speaker-button press, prefers an available en-IN voice, falls back to another English voice, and stops on close, clear or an explicit stop action. Browser/OS voice availability varies; some voices may use remote speech services.
+
+Implementation references: [OpenAI text generation](https://developers.openai.com/api/docs/guides/text) and [GPT-5.6 Luna](https://developers.openai.com/api/docs/models/gpt-5.6-luna).
+
+## Data, privacy and limitations
+
+Journey estimates, scores and route geometry are fixed illustrations. The six hub coordinates identify proposed example points, not confirmed facilities. Paths may not follow streets and must not be treated as turn by turn navigation. OpenStreetMap imagery is external map data; it does not validate the overlaid safety information. Only matching hubs appear after filtering.
+
+Browser location is requested only on a button press. It remains in frontend page state and is not stored in SQLite, browser storage or report records. Journey may choose the nearest supported planning area within 3 km; it never invents a connecting route from arbitrary coordinates. Map tile requests reveal the viewed area to OpenStreetMap. External directions share the chosen hub coordinates when intentionally opened. Geolocation and clipboard features require HTTPS or localhost; a phone visiting a laptop's plain HTTP LAN address may not have access.
+
+Reports are anonymous and do not request names, phone numbers, emails or ID numbers. Free text can still contain identifying details, so the form discourages them. SQLite retains submitted landmarks and descriptions locally; neither report listing endpoint exposes those fields. Community counts represent received submissions only, not official crime or safety statistics.
+
+Ask Thaai never automatically receives browser location, emergency coordinates, report descriptions, landmarks, phone numbers or database contents. Text intentionally entered by the user and recent chat turns are sent through FastAPI to OpenAI. Do not include identifying details. No chat messages are saved in SQLite or browser storage. `store=False` disables hosted response retrieval storage; it is not a promise of zero provider retention. See [OpenAI data controls](https://platform.openai.com/docs/guides/your-data) for provider policies. Application code does not log messages or keys.
+
+Emergency Help provides real contact links for **112** and **181**. It does not place a call automatically, send an alert, contact police or dispatch responders. Sharing requires the user to choose an app/recipient and complete sending. Sharing success is not delivery confirmation. Browser location accuracy is device dependent. No continuous GPS tracking occurs.
+
+The dismissible global prototype notice explains illustrative mobility data. The original concept files in `docs/original_prototype` remain reference material and are not working application code.
 
 ## Checks
 
-Build and preview the frontend:
-
 ```powershell
-cd frontend
+# From frontend
 npm run build
 npm run preview
-```
+node --test tests/mapData.test.js
 
-Open http://localhost:4173, navigate through all seven pages, and refresh a nested route such as `/journey`. Check keyboard navigation and a narrow viewport. A future deployment must serve `index.html` for frontend routes; Vite handles this locally.
-
-With the backend running, check health in PowerShell:
-
-```powershell
-Invoke-RestMethod http://127.0.0.1:8000/api/health
-```
-
-Check Python dependency compatibility from `backend`:
-
-```powershell
+# From backend
+.\.venv\Scripts\python.exe -m unittest discover -s tests -v
 .\.venv\Scripts\python.exe -m pip check
 ```
 
-Run isolated backend privacy, ordering and summary tests from `backend`:
+Preview runs at http://localhost:4173. Backend tests use isolated data and mocked provider calls, including request bounds, missing configuration, emergency wording, output contracts and sanitized provider failures. No OpenAI key was available during implementation, so real model quality and latency still need validation with a configured account. No paid provider call is required by the tests.
 
-```powershell
-.\.venv\Scripts\python.exe -m unittest discover -s tests -v
-```
+Browser validation covers suggestions, sending, errors, clear/close/reopen, internal navigation, bounded/private request payloads, speech controls, keyboard focus, reduced motion and mobile layouts, alongside the existing product flows. A mocked provider reply tests UI behaviour without pretending it came from a live model. Physical GPS, native share sheets, speech audio and mobile keyboards should also be checked on real devices. Temporary automated report records should be deleted after testing without removing genuine submissions.
 
-These tests use in-memory SQLite and never modify local reports. For manual integration testing, submit a clearly marked nonincident report, follow "View community updates", and verify that neither the landmark nor description appears in the UI or public API response. Clean up only the exact automated records created for the test. Keep genuine user submissions.
+## Production deployment considerations
 
-## Development boundaries
+Deployment is not included in this task. Before public release:
 
-Keep future work beginner-readable and add product features incrementally. No Docker, Kubernetes, cloud database, microservices, AI models, or authentication infrastructure is included. Treat original prototype documents as reference material, not working application code.
-
-Framework references: [Vite](https://vite.dev/guide/), [React Router](https://reactrouter.com/start/declarative/installation), [FastAPI CORS](https://fastapi.tiangolo.com/tutorial/cors/), and [SQLAlchemy SQLite](https://docs.sqlalchemy.org/en/20/dialects/sqlite.html).
+- Serve the frontend with HTTPS and an SPA fallback to index.html. Build with the correct public backend URL and configure explicit backend CORS origins.
+- Keep OpenAI secrets in the server environment or a secret manager. Confirm model access, budgets and billing. Add request size limits, rate limiting, abuse controls and monitoring before exposing the currently unauthenticated assistant endpoint publicly.
+- Establish report moderation, retention, deletion and access policies. Protect the SQLite file, plan backups and introduce managed schema migrations when needed.
+- Validate route and facility datasets before making real safety or availability claims. No official affiliation or emergency dispatch integration exists.
+- Follow the [OpenStreetMap tile usage policy](https://operations.osmfoundation.org/policies/tiles/), including attribution, caching and capacity planning. No tile prefetch or offline download is implemented.
+- Test accessibility, language needs, mobile browsers, voice availability, location permissions, service outages and provider responses with intended users. Preserve a usable experience without the assistant.
